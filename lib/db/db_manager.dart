@@ -30,9 +30,7 @@ class DbManager {
 
   Future<void> initDatabase() async {
     if (Platform.isWindows || Platform.isLinux) {
-      // Initialize FFI
       sqfliteFfiInit();
-      // Change the default factory
       databaseFactory = databaseFactoryFfi;
     }
     final path = await getDatabasePath(_databaseName);
@@ -44,13 +42,6 @@ class DbManager {
         createAppSettingsTable(batch);
         await batch.commit();
       },
-      // onUpgrade: (db, oldVersion, newVersion) async {
-      //   var batch = db.batch();
-      //   if (oldVersion < 2 ) {
-      //     // do some migrate works
-      //   }
-      //   await batch.commit();
-      // },
       onDowngrade: onDatabaseDowngradeDelete,
     );
   }
@@ -59,7 +50,8 @@ class DbManager {
     batch.execute('DROP TABLE IF EXISTS ${AppSettingsTable.tableName}');
     batch.execute('''CREATE TABLE ${AppSettingsTable.tableName}
     (
-      ${AppSettingsTable.columnKey} INTEGER PRIMARY KEY
+      ${AppSettingsTable.columnKey} INTEGER PRIMARY KEY,
+      ${AppSettingsTable.columnPath} TEXT
     )''');
   }
 }
