@@ -1,10 +1,13 @@
 import 'package:flupass/db/db_manager.dart';
 import 'package:flupass/model/pass_store_model.dart';
 import 'package:flupass/page/page.dart';
+import 'package:flupass/routes.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 import 'model/app_settings_model.dart';
+
+final GlobalKey<NavigatorState> navKey = GlobalKey<NavigatorState>();
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -36,7 +39,12 @@ class MyApp extends StatelessWidget {
         theme: ThemeData(
           primarySwatch: Colors.blue,
         ),
-        home: const HomePage(),
+        navigatorKey: navKey,
+        initialRoute: Routes.home,
+        routes: {
+          Routes.home: (context) => const HomePage(),
+          Routes.settings: (context) => const SettingsPage(),
+        },
       ),
     );
   }

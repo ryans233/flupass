@@ -5,7 +5,9 @@ import 'package:flupass/model/app_settings_model.dart';
 import 'package:flupass/model/pass_store_model.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:provider/src/provider.dart';
+import 'package:provider/provider.dart';
+
+import '../routes.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({Key? key}) : super(key: key);
@@ -54,14 +56,8 @@ class PassList extends StatelessWidget {
           AppBar(
             actions: [
               IconButton(
-                  onPressed: () async {
-                    final result = await FilePicker.platform.getDirectoryPath();
-                    if (result != null) {
-                      context.read<AppSettingsModel>().path = result;
-                    } else {
-                      // User canceled the picker
-                    }
-                  },
+                  onPressed: () =>
+                      Navigator.of(context).pushNamed(Routes.settings),
                   icon: const Icon(Icons.settings))
             ],
           ),
