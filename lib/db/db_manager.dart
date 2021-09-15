@@ -51,7 +51,9 @@ class DbManager {
     batch.execute('''CREATE TABLE ${AppSettingsTable.tableName}
     (
       ${AppSettingsTable.columnKey} INTEGER PRIMARY KEY,
-      ${AppSettingsTable.columnPath} TEXT
+      ${AppSettingsTable.columnPath} TEXT,
+      ${AppSettingsTable.columnPrivateKey} TEXT,
+      ${AppSettingsTable.columnPassphrase} TEXT
     )''');
   }
 }

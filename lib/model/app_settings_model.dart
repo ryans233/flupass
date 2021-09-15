@@ -14,6 +14,16 @@ class AppSettingsModel with ChangeNotifier {
 
   set path(String path) => setSettings(AppSettingsTable.columnPath, path);
 
+  String get privateKey => settings.privateKey;
+
+  set privateKey(String privateKey) =>
+      setSettings(AppSettingsTable.columnPrivateKey, privateKey);
+
+  String get passphrase => settings.passphrase;
+
+  set passphrase(String passphrase) =>
+      setSettings(AppSettingsTable.columnPassphrase, passphrase);
+
   setSettings(String key, dynamic value) {
     prefRepo.set(key, value).then((_) => refreshAppSettings());
   }
