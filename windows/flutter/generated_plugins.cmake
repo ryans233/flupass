@@ -3,6 +3,7 @@
 #
 
 list(APPEND FLUTTER_PLUGIN_LIST
+  openpgp
 )
 
 set(PLUGIN_BUNDLED_LIBRARIES)

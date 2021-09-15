@@ -135,6 +135,13 @@ packages:
       url: "https://pub.flutter-io.cn"
     source: hosted
     version: "1.0.0"
+  openpgp:
+    dependency: "direct main"
+    description:
+      name: openpgp
+      url: "https://pub.flutter-io.cn"
+    source: hosted
+    version: "3.0.0"
   path:
     dependency: transitive
     description:

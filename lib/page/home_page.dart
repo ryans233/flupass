@@ -66,8 +66,11 @@ class PassList extends StatelessWidget {
             child: ListView.builder(
               itemCount: select.length,
               itemBuilder: (_, index) => ListTile(
-                title: Text("[${select[index] is File}]${select[index].path}"),
-              ),
+                  title:
+                      Text("[${select[index] is File}]${select[index].path}"),
+                  onTap: () => context
+                      .read<PassStoreModel>()
+                      .decrypt(select[index].path)),
             ),
           ),
         ],

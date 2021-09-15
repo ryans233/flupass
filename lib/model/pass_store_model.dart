@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:flupass/model/app_settings_model.dart';
 import 'package:flutter/foundation.dart';
+import 'package:openpgp/openpgp.dart';
 
 class PassStoreModel with ChangeNotifier {
   final AppSettingsModel appSettingsModel;
@@ -24,5 +25,17 @@ class PassStoreModel with ChangeNotifier {
   updatePassStore() async {
     root = await Directory(_passStorePath).list(recursive: false).toList();
     notifyListeners();
+  }
+
+  decrypt(String path) async {
+    final file = File(path);
+    try {
+      var readAsBytesSync = await file.readAsBytes();
+      final result = await OpenPGP.decryptBytes(readAsBytesSync,
+          appSettingsModel.privateKey, appSettingsModel.passphrase);
+      debugPrint(String.fromCharCodes(result));
+    } catch (e, s) {
+      debugPrint(e.toString());
+    }
   }
 }
