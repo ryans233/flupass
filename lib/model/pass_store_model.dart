@@ -3,11 +3,16 @@ import 'dart:io';
 import 'package:flupass/model/app_settings_model.dart';
 import 'package:flutter/foundation.dart';
 import 'package:openpgp/openpgp.dart';
+import 'package:path/path.dart';
 
 class PassStoreModel with ChangeNotifier {
   final AppSettingsModel appSettingsModel;
 
   String _passStorePath = "";
+
+  String _relativePath = "";
+
+  String get relativePath => _relativePath;
 
   List<FileSystemEntity> root = List.empty();
 
@@ -25,7 +30,10 @@ class PassStoreModel with ChangeNotifier {
   }
 
   updatePassStore() async {
-    root = await Directory(_passStorePath).list(recursive: false).toList();
+    root = await Directory(_passStorePath + _relativePath)
+        .list(recursive: false)
+        .where((event) => !basename(event.path).startsWith("."))
+        .toList();
     notifyListeners();
   }
 
