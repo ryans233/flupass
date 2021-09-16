@@ -1,5 +1,5 @@
 import 'package:flupass/db/db_manager.dart';
-import 'package:flupass/model/pass_store_model.dart';
+import 'package:flupass/model/pass_store_list_model.dart';
 import 'package:flupass/page/page.dart';
 import 'package:flupass/routes.dart';
 import 'package:flutter/material.dart';
@@ -26,9 +26,9 @@ class MyApp extends StatelessWidget {
           create: (_) => AppSettingsModel(),
           lazy: false,
         ),
-        ChangeNotifierProxyProvider<AppSettingsModel, PassStoreModel>(
+        ChangeNotifierProxyProvider<AppSettingsModel, PassStoreListModel>(
           create: (BuildContext context) =>
-              PassStoreModel(context.read<AppSettingsModel>()),
+              PassStoreListModel(context.read<AppSettingsModel>()),
           update: (context, value, previous) =>
               previous!..onAppSettingsChanged(),
           lazy: false,

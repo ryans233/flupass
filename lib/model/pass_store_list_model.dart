@@ -2,10 +2,9 @@ import 'dart:io';
 
 import 'package:flupass/model/app_settings_model.dart';
 import 'package:flutter/foundation.dart';
-import 'package:openpgp/openpgp.dart';
 import 'package:path/path.dart';
 
-class PassStoreModel with ChangeNotifier {
+class PassStoreListModel with ChangeNotifier {
   final AppSettingsModel appSettingsModel;
 
   String _passStorePath = "";
@@ -16,14 +15,15 @@ class PassStoreModel with ChangeNotifier {
 
   List<FileSystemEntity> root = List.empty();
 
-  PassStoreModel(this.appSettingsModel);
+  PassStoreListModel(this.appSettingsModel);
 
   String details = "";
 
   onAppSettingsChanged() {
     var oldPath = _passStorePath;
     var newPath = appSettingsModel.path;
-    debugPrint("onAppSettingsChanged: old=$oldPath new=$newPath");
+    debugPrint(
+        "PassStoreListModel: onAppSettingsChanged old=$oldPath new=$newPath");
     if (oldPath == newPath) return;
     _passStorePath = newPath;
     updatePassStore();
@@ -48,24 +48,5 @@ class PassStoreModel with ChangeNotifier {
     pathSegments.removeLast();
     final name = pathSegments.join(Platform.pathSeparator);
     navigateToFolder(name);
-  }
-
-  decrypt(String path) async {
-    clear();
-    final file = File(path);
-    try {
-      var readAsBytesSync = await file.readAsBytes();
-      final result = await OpenPGP.decryptBytes(readAsBytesSync,
-          appSettingsModel.privateKey, appSettingsModel.passphrase);
-      details = String.fromCharCodes(result);
-      notifyListeners();
-    } catch (e, s) {
-      debugPrint(e.toString());
-    }
-  }
-
-  clear() {
-    details = "";
-    notifyListeners();
   }
 }
