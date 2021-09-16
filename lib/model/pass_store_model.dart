@@ -51,6 +51,7 @@ class PassStoreModel with ChangeNotifier {
   }
 
   decrypt(String path) async {
+    clear();
     final file = File(path);
     try {
       var readAsBytesSync = await file.readAsBytes();
@@ -61,5 +62,10 @@ class PassStoreModel with ChangeNotifier {
     } catch (e, s) {
       debugPrint(e.toString());
     }
+  }
+
+  clear() {
+    details = "";
+    notifyListeners();
   }
 }

@@ -52,7 +52,7 @@ class PassList extends StatelessWidget {
         context.select((PassStoreModel model) => model.relativePath);
     var shouldShowTitle =
         (relativePath.isEmpty || relativePath == Platform.pathSeparator);
-    var sizedBox = Column(
+    var passStoreList = Column(
       children: [
         AppBar(
             actions: [
@@ -81,6 +81,17 @@ class PassList extends StatelessWidget {
                   onTap: () {
                     if (entry is File) {
                       context.read<PassStoreModel>().decrypt(entry.path);
+                      if (singleColumn) {
+                        Navigator.of(context).push(
+                          MaterialPageRoute(
+                            builder: (context) => Scaffold(
+                              body: DetailsView(
+                                singleColumn,
+                              ),
+                            ),
+                          ),
+                        );
+                      }
                     } else if (entry is Directory) {
                       context
                           .read<PassStoreModel>()
@@ -92,18 +103,18 @@ class PassList extends StatelessWidget {
         ),
       ],
     );
+    var passStoreDetails = DetailsView(singleColumn);
     return singleColumn
-        ? sizedBox
+        ? passStoreList
         : Row(
             children: [
               Expanded(
                 flex: 2,
-                child: sizedBox,
+                child: passStoreList,
               ),
               Expanded(
                 flex: 3,
-                child: DetailsView(
-                    context.select((PassStoreModel model) => model.details)),
+                child: passStoreDetails,
               )
             ],
           );
@@ -111,25 +122,64 @@ class PassList extends StatelessWidget {
 }
 
 class DetailsView extends StatefulWidget {
-  const DetailsView(this.text, {Key? key}) : super(key: key);
+  const DetailsView(
+    this.singleColumn, {
+    Key? key,
+    this.mode = DetailsViewMode.readOnly,
+  }) : super(key: key);
 
-  final String text;
+  final bool singleColumn;
+  final DetailsViewMode mode;
 
   @override
   State<DetailsView> createState() => _DetailsViewState();
 }
 
+enum DetailsViewMode {
+  create, // Create a new password.
+  modify, // Modify an existing password.
+  readOnly, // Read only mode.
+}
+
 class _DetailsViewState extends State<DetailsView> {
   bool _obscureText = true;
-  bool _isEditMode = false;
+  late DetailsViewMode mode;
+
+  @override
+  void initState() {
+    super.initState();
+    mode = widget.mode;
+  }
 
   @override
   Widget build(BuildContext context) {
-    final lines = widget.text.split('\n');
-    return lines.isEmpty
-        ? const Center(child: Text("No result."))
-        : ListView(
-            children: transformToWidgets(lines),
+    final text = context.select((PassStoreModel model) => model.details);
+    final lines = text.split('\n');
+    return text.isEmpty
+        ? const Center(child: Text("Empty"))
+        : Scaffold(
+            appBar: AppBar(
+              title: Text(mode.toString(),
+                  style: const TextStyle(
+                    color: Colors.grey,
+                  )),
+              backgroundColor: Colors.white,
+              leading: IconButton(
+                icon: const Icon(
+                  Icons.close,
+                  color: Colors.grey,
+                ),
+                onPressed: () {
+                  if (widget.singleColumn) Navigator.of(context).pop();
+                  context.read<PassStoreModel>().clear();
+                },
+              ),
+            ),
+            body: lines.isEmpty
+                ? const Center(child: Text("No result."))
+                : ListView(
+                    children: transformToWidgets(lines),
+                  ),
           );
   }
 
@@ -147,7 +197,7 @@ class _DetailsViewState extends State<DetailsView> {
                   decoration: const InputDecoration(
                     labelText: "Password",
                   ),
-                  readOnly: !_isEditMode,
+                  readOnly: mode == DetailsViewMode.readOnly,
                 ),
                 Positioned(
                   child: Row(
@@ -178,7 +228,7 @@ class _DetailsViewState extends State<DetailsView> {
                 decoration: InputDecoration(
                   labelText: split.first,
                 ),
-                readOnly: !_isEditMode,
+                readOnly: mode == DetailsViewMode.readOnly,
               );
             } else {
               return SelectableText(line);
