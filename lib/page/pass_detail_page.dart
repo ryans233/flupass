@@ -32,21 +32,47 @@ class _DetailViewState extends State<DetailView> {
         ? const Center(child: Text("Empty"))
         : Scaffold(
             appBar: AppBar(
-              title: Text(mode.toString(),
-                  style: const TextStyle(
-                    color: Colors.grey,
-                  )),
+              title: Text(
+                mode.toString(),
+                style: const TextStyle(
+                  color: Colors.grey,
+                ),
+              ),
               backgroundColor: Colors.white,
               leading: IconButton(
-                icon: const Icon(
-                  Icons.close,
+                icon: Icon(
+                  mode == DetailViewMode.modify
+                      ? Icons.arrow_back
+                      : Icons.close,
                   color: Colors.grey,
                 ),
                 onPressed: () {
-                  if (widget.singleColumn) Navigator.of(context).pop();
-                  context.read<PassDetailModel>().clear();
+                  if (mode == DetailViewMode.modify) {
+                    context
+                        .read<PassDetailModel>()
+                        .setMode(DetailViewMode.readOnly);
+                  } else {
+                    if (widget.singleColumn) {
+                      Navigator.of(context).pop();
+                    }
+                    context.read<PassDetailModel>().clear();
+                  }
                 },
               ),
+              actions: [
+                mode != DetailViewMode.readOnly
+                    ? const SizedBox.shrink()
+                    : TextButton(
+                        onPressed: () => context
+                            .read<PassDetailModel>()
+                            .setMode(DetailViewMode.modify),
+                        child: Text("Edit".toUpperCase())),
+                mode == DetailViewMode.readOnly
+                    ? const SizedBox.shrink()
+                    : TextButton(
+                        onPressed: () => context.read<PassDetailModel>().save(),
+                        child: Text("Done".toUpperCase())),
+              ],
             ),
             body: lines.isEmpty
                 ? const Center(child: Text("No result."))
@@ -59,9 +85,10 @@ class _DetailViewState extends State<DetailView> {
   List<Widget> transformToWidgets(mode, obscurePassword, List<String> lines) =>
       lines
           .map((line) {
+            var index = lines.indexOf(line);
             if (line.isEmpty) {
               return null;
-            } else if (lines.indexOf(line) == 0) {
+            } else if (index == 0) {
               return Stack(
                 children: [
                   TextFormField(
@@ -71,6 +98,7 @@ class _DetailViewState extends State<DetailView> {
                       labelText: "Password",
                     ),
                     readOnly: mode == DetailViewMode.readOnly,
+                    onChanged: (value) => lines[0] = value,
                   ),
                   Positioned(
                     child: Row(
@@ -96,23 +124,14 @@ class _DetailViewState extends State<DetailView> {
               );
             } else {
               var split = line.split(': ');
-              if (split.length == 2) {
-                return TextFormField(
-                  initialValue: split.last,
-                  decoration: InputDecoration(
-                    labelText: split.first,
-                  ),
-                  readOnly: mode == DetailViewMode.readOnly,
-                );
-              } else {
-                return TextFormField(
-                  initialValue: line,
-                  decoration: const InputDecoration(
-                    labelText: "No Label",
-                  ),
-                  readOnly: mode == DetailViewMode.readOnly,
-                );
-              }
+              return TextFormField(
+                initialValue: split.length == 2 ? split.last : line,
+                decoration: InputDecoration(
+                  labelText: split.length == 2 ? split.first : "No Label",
+                ),
+                readOnly: mode == DetailViewMode.readOnly,
+                onChanged: (value) => lines[index] = value,
+              );
             }
           })
           .where((element) => element != null)

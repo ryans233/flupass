@@ -1,4 +1,6 @@
+import 'dart:convert';
 import 'dart:io';
+import 'dart:typed_data';
 
 import 'package:flupass/model/app_settings_model.dart';
 import 'package:flutter/foundation.dart';
@@ -12,6 +14,8 @@ class PassDetailModel with ChangeNotifier {
   String passphrase = "";
 
   String privateKey = "";
+
+  String publicKey = "";
 
   List<String> decryptedLines = List.empty();
 
@@ -28,15 +32,18 @@ class PassDetailModel with ChangeNotifier {
   }) {
     passphrase = appSettingsModel.passphrase;
     privateKey = appSettingsModel.privateKey;
+    publicKey = appSettingsModel.publicKey;
     decrypt(selectedPassPath);
   }
 
   onAppSettingsChanged() {
     if (privateKey == appSettingsModel.privateKey &&
+        publicKey == appSettingsModel.publicKey &&
         passphrase == appSettingsModel.passphrase) return;
     debugPrint("PassDetailModel: onAppSettingsChanged");
     passphrase = appSettingsModel.passphrase;
     privateKey = appSettingsModel.privateKey;
+    publicKey = appSettingsModel.publicKey;
     decrypt(selectedPassPath);
   }
 
@@ -50,7 +57,7 @@ class PassDetailModel with ChangeNotifier {
       var readAsBytesSync = await file.readAsBytes();
       final result =
           await OpenPGP.decryptBytes(readAsBytesSync, privateKey, passphrase);
-      decryptedLines = String.fromCharCodes(result).split("\n");
+      decryptedLines = String.fromCharCodes(result).trimRight().split("\n");
       notifyListeners();
     } catch (e, s) {
       debugPrint(e.toString());
@@ -60,6 +67,27 @@ class PassDetailModel with ChangeNotifier {
   clear() {
     decryptedLines = List.empty();
     notifyListeners();
+  }
+
+  setMode(DetailViewMode mode) {
+    this.mode = mode;
+    notifyListeners();
+  }
+
+  save() async {
+    if (publicKey.isEmpty) return;
+    try {
+      String s = decryptedLines.fold<String>(
+          "", (previousValue, element) => previousValue + element + "\n");
+      var encrypted = await OpenPGP.encryptBytes(
+          Uint8List.fromList(utf8.encode(s)), publicKey);
+      File passFile = File(selectedPassPath);
+      await passFile.writeAsBytes(encrypted);
+      mode = DetailViewMode.readOnly;
+      notifyListeners();
+    } catch (e, s) {
+      debugPrint(e.toString());
+    } finally {}
   }
 }
 
