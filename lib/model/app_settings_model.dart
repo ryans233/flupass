@@ -14,6 +14,11 @@ class AppSettingsModel with ChangeNotifier {
 
   set path(String path) => setSettings(AppSettingsTable.columnPath, path);
 
+  String get publicKey => settings.publicKey;
+
+  set publicKey(String publicKey) =>
+      setSettings(AppSettingsTable.columnPublicKey, publicKey);
+
   String get privateKey => settings.privateKey;
 
   set privateKey(String privateKey) =>

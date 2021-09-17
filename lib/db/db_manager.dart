@@ -53,6 +53,7 @@ class DbManager {
       ${AppSettingsTable.columnKey} INTEGER PRIMARY KEY,
       ${AppSettingsTable.columnPath} TEXT,
       ${AppSettingsTable.columnPrivateKey} TEXT,
+      ${AppSettingsTable.columnPublicKey} TEXT,
       ${AppSettingsTable.columnPassphrase} TEXT
     )''');
   }

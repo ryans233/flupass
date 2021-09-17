@@ -48,6 +48,24 @@ class SettingsPage extends StatelessWidget {
             },
           ),
           ListTile(
+            title: const Text('Public key'),
+            subtitle: Text(context
+                    .select((AppSettingsModel model) => model.publicKey)
+                    .isEmpty
+                ? "Unset"
+                : "Set"),
+            onTap: () async {
+              final result = await FilePicker.platform
+                  .pickFiles(allowedExtensions: ["asc"]);
+              if (result != null) {
+                context.read<AppSettingsModel>().publicKey =
+                    await File(result.files.first.path).readAsString();
+              } else {
+                // User canceled the picker
+              }
+            },
+          ),
+          ListTile(
             title: const Text('Passphrase'),
             subtitle: Text(context
                     .select((AppSettingsModel model) => model.passphrase)
