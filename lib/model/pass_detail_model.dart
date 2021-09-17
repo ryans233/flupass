@@ -23,7 +23,10 @@ class PassDetailModel with ChangeNotifier {
 
   bool obscurePassword = true;
 
-  toggleObscurePassword() => obscurePassword = !obscurePassword;
+  toggleObscurePassword() {
+    obscurePassword = !obscurePassword;
+    notifyListeners();
+  }
 
   PassDetailModel(
     this.appSettingsModel,
