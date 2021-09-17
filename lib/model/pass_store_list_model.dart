@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:io';
 
 import 'package:flupass/model/app_settings_model.dart';
@@ -19,6 +20,8 @@ class PassStoreListModel with ChangeNotifier {
 
   String details = "";
 
+  StreamSubscription<FileSystemEvent>? watcher;
+
   onAppSettingsChanged() {
     var oldPath = _passStorePath;
     var newPath = appSettingsModel.path;
@@ -30,7 +33,12 @@ class PassStoreListModel with ChangeNotifier {
   }
 
   updatePassStore() async {
-    root = await Directory(_passStorePath + _relativePath)
+    var directory = Directory(_passStorePath + _relativePath);
+    watcher?.cancel();
+    watcher = directory.watch().listen((event) {
+      updatePassStore();
+    });
+    root = await directory
         .list(recursive: false)
         .where((event) => !basename(event.path).startsWith("."))
         .toList();
@@ -48,5 +56,11 @@ class PassStoreListModel with ChangeNotifier {
     pathSegments.removeLast();
     final name = pathSegments.join(Platform.pathSeparator);
     navigateToFolder(name);
+  }
+
+  @override
+  void dispose() {
+    watcher?.cancel();
+    super.dispose();
   }
 }
