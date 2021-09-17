@@ -3,7 +3,7 @@ import 'dart:io';
 
 import 'package:flupass/model/app_settings_model.dart';
 import 'package:flutter/foundation.dart';
-import 'package:path/path.dart';
+import 'package:path/path.dart' as p;
 
 class PassStoreListModel with ChangeNotifier {
   final AppSettingsModel appSettingsModel;
@@ -38,10 +38,12 @@ class PassStoreListModel with ChangeNotifier {
     watcher = directory.watch().listen((event) {
       updatePassStore();
     });
-    root = await directory
-        .list(recursive: false)
-        .where((event) => !basename(event.path).startsWith("."))
-        .toList();
+    root = await directory.list(recursive: false).where((event) {
+      final basename = p.basename(event.path);
+      return !basename.startsWith(".") &&
+          (event is Directory ||
+              (event is File && p.extension(event.path) == ".gpg"));
+    }).toList();
     notifyListeners();
   }
 
