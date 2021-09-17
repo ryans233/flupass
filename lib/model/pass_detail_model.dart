@@ -89,6 +89,16 @@ class PassDetailModel with ChangeNotifier {
       debugPrint(e.toString());
     } finally {}
   }
+
+  delete() async {
+    try {
+      File passFile = File(selectedPassPath);
+      await passFile.delete();
+      clear();
+    } catch (e, s) {
+      debugPrint(e.toString());
+    }
+  }
 }
 
 enum DetailViewMode {

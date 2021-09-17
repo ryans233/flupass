@@ -28,6 +28,20 @@ class _DetailViewState extends State<DetailView> {
     final mode = context.select((PassDetailModel model) => model.mode);
     final obscureText =
         context.select((PassDetailModel model) => model.obscurePassword);
+    var entries = transformToWidgets(mode, obscureText, lines);
+    if (mode == DetailViewMode.modify) {
+      entries.add(ListTile(
+        leading: Icon(Icons.delete),
+        onTap: () => context.read<PassDetailModel>().delete(),
+        title: Text(
+          "Delete",
+          style: TextStyle(
+            color: Colors.red,
+            fontWeight: FontWeight.bold,
+          ),
+        ),
+      ));
+    }
     return lines.isEmpty
         ? const Center(child: Text("Empty"))
         : Scaffold(
@@ -76,9 +90,7 @@ class _DetailViewState extends State<DetailView> {
             ),
             body: lines.isEmpty
                 ? const Center(child: Text("No result."))
-                : ListView(
-                    children: transformToWidgets(mode, obscureText, lines),
-                  ),
+                : ListView(children: entries),
           );
   }
 
