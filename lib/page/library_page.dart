@@ -1,10 +1,53 @@
+import 'dart:io';
+
+import 'package:flupass/model/app_settings_model.dart';
 import 'package:flupass/model/pass_detail_model.dart';
+import 'package:flupass/model/pass_store_list_model.dart';
+import 'package:flupass/routes.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:path/path.dart';
 import 'package:provider/provider.dart';
 
-class DetailView extends StatefulWidget {
-  const DetailView(
+class LibraryPage extends StatelessWidget {
+  const LibraryPage({
+    Key? key,
+  }) : super(key: key);
+
+  static const _maxColumnWidth = 500;
+
+  @override
+  Widget build(BuildContext context) {
+    return LayoutBuilder(builder: (context, constraints) {
+      bool singleColumn = constraints.maxWidth < _maxColumnWidth;
+      return Scaffold(
+        body: singleColumn
+            ? PassListView(singleColumn)
+            : ChangeNotifierProxyProvider<AppSettingsModel, PassDetailModel>(
+                create: (context) =>
+                    PassDetailModel(context.read<AppSettingsModel>()),
+                update: (context, model, previous) =>
+                    previous!..onAppSettingsChanged(),
+                child: Row(
+                  children: [
+                    Expanded(
+                      flex: 2,
+                      child: PassListView(singleColumn),
+                    ),
+                    Expanded(
+                      flex: 3,
+                      child: PassDetailView(singleColumn),
+                    )
+                  ],
+                ),
+              ),
+      );
+    });
+  }
+}
+
+class PassListView extends StatelessWidget {
+  const PassListView(
     this.singleColumn, {
     Key? key,
   }) : super(key: key);
@@ -12,14 +55,80 @@ class DetailView extends StatefulWidget {
   final bool singleColumn;
 
   @override
-  State<DetailView> createState() => _DetailViewState();
+  Widget build(BuildContext context) {
+    var root = context.select((PassStoreListModel model) => model.root);
+    var relativePath =
+        context.select((PassStoreListModel model) => model.relativePath);
+    var shouldShowTitle =
+        (relativePath.isEmpty || relativePath == Platform.pathSeparator);
+    return Builder(
+      builder: (context) => Column(
+        children: [
+          AppBar(
+              actions: [
+                IconButton(
+                    onPressed: () =>
+                        Navigator.of(context).pushNamed(Routes.settings),
+                    icon: const Icon(Icons.settings))
+              ],
+              title: Text(shouldShowTitle ? 'flupass' : relativePath),
+              leading: shouldShowTitle
+                  ? const SizedBox.shrink()
+                  : IconButton(
+                      onPressed: () => context
+                          .read<PassStoreListModel>()
+                          .navigateToParentFolder(),
+                      icon: const Icon(Icons.arrow_upward))),
+          Expanded(
+            child: ListView.builder(
+              itemCount: root.length,
+              itemBuilder: (_, index) {
+                var entry = root[index];
+                return ListTile(
+                    leading: Icon((entry is Directory)
+                        ? Icons.folder
+                        : Icons.file_present),
+                    title: Text(basename(entry.path)),
+                    onTap: () {
+                      if (entry is File) {
+                        if (singleColumn) {
+                          Navigator.of(context).push(
+                            MaterialPageRoute(
+                              builder: (context) => Material(
+                                child: ChangeNotifierProvider(
+                                  child: PassDetailView(singleColumn),
+                                  create: (_) => PassDetailModel(
+                                      context.read<AppSettingsModel>(),
+                                      selectedPassPath: entry.path),
+                                ),
+                              ),
+                            ),
+                          );
+                        } else {
+                          context.read<PassDetailModel>().decrypt(entry.path);
+                        }
+                      } else if (entry is Directory) {
+                        context
+                            .read<PassStoreListModel>()
+                            .navigateToFolder(basename(entry.path));
+                      }
+                    });
+              },
+            ),
+          ),
+        ],
+      ),
+    );
+  }
 }
 
-class _DetailViewState extends State<DetailView> {
-  @override
-  void initState() {
-    super.initState();
-  }
+class PassDetailView extends StatelessWidget {
+  const PassDetailView(
+    this.singleColumn, {
+    Key? key,
+  }) : super(key: key);
+
+  final bool singleColumn;
 
   @override
   Widget build(BuildContext context) {
@@ -28,12 +137,12 @@ class _DetailViewState extends State<DetailView> {
     final mode = context.select((PassDetailModel model) => model.mode);
     final obscureText =
         context.select((PassDetailModel model) => model.obscurePassword);
-    var entries = transformToWidgets(mode, obscureText, lines);
+    var entries = transformToWidgets(context, mode, obscureText, lines);
     if (mode == DetailViewMode.modify) {
       entries.add(ListTile(
-        leading: Icon(Icons.delete),
+        leading: const Icon(Icons.delete),
         onTap: () => context.read<PassDetailModel>().delete(),
-        title: Text(
+        title: const Text(
           "Delete",
           style: TextStyle(
             color: Colors.red,
@@ -66,7 +175,7 @@ class _DetailViewState extends State<DetailView> {
                         .read<PassDetailModel>()
                         .setMode(DetailViewMode.readOnly);
                   } else {
-                    if (widget.singleColumn) {
+                    if (singleColumn) {
                       Navigator.of(context).pop();
                     }
                     context.read<PassDetailModel>().clear();
@@ -94,7 +203,8 @@ class _DetailViewState extends State<DetailView> {
           );
   }
 
-  List<Widget> transformToWidgets(mode, obscurePassword, List<String> lines) =>
+  List<Widget> transformToWidgets(
+          context, mode, obscurePassword, List<String> lines) =>
       lines
           .map((line) {
             var index = lines.indexOf(line);

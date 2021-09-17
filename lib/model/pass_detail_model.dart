@@ -29,9 +29,9 @@ class PassDetailModel with ChangeNotifier {
   }
 
   PassDetailModel(
-    this.appSettingsModel,
-    this.selectedPassPath, {
+    this.appSettingsModel, {
     this.mode = DetailViewMode.readOnly,
+    this.selectedPassPath = "",
   }) {
     passphrase = appSettingsModel.passphrase;
     privateKey = appSettingsModel.privateKey;
