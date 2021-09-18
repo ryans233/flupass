@@ -6,6 +6,7 @@ import 'package:flupass/model/pass_store_list_model.dart';
 import 'package:flupass/routes.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_speed_dial/flutter_speed_dial.dart';
 import 'package:path/path.dart';
 import 'package:provider/provider.dart';
 
@@ -41,8 +42,70 @@ class LibraryPage extends StatelessWidget {
                   ],
                 ),
               ),
+        floatingActionButton: SpeedDial(
+          icon: Icons.add,
+          tooltip: "Create",
+          children: [
+            SpeedDialChild(
+              child: Icon(Icons.file_present),
+              backgroundColor: Colors.deepOrange,
+              foregroundColor: Colors.white,
+              label: 'New pass',
+            ),
+            SpeedDialChild(
+              child: Icon(Icons.folder),
+              backgroundColor: Colors.indigo,
+              foregroundColor: Colors.white,
+              label: 'New folder',
+              onTap: () => showCreateFolderDialog(context),
+            ),
+          ],
+        ),
       );
     });
+  }
+
+  showCreateFolderDialog(BuildContext context) {
+    final textEditingController = TextEditingController();
+    final formKey = GlobalKey<FormState>();
+    showDialog(
+        context: context,
+        builder: (_) => AlertDialog(
+              title: Text('New folder'),
+              content: Form(
+                key: formKey,
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Text("Current path: " +
+                        context.read<PassStoreListModel>().relativePath),
+                    TextFormField(
+                      decoration: InputDecoration(hintText: 'Folder name'),
+                      controller: textEditingController,
+                      validator: (value) {
+                        if (value == null || value.isEmpty) {
+                          return 'Please enter a valid folder name';
+                        }
+                        return null;
+                      },
+                    ),
+                  ],
+                ),
+              ),
+              actions: [
+                TextButton(
+                  child: Text('Create'),
+                  onPressed: () {
+                    if (formKey.currentState?.validate() == true) {
+                      Navigator.of(context).pop();
+                      context
+                          .read<PassStoreListModel>()
+                          .createFolder(textEditingController.text);
+                    }
+                  },
+                ),
+              ],
+            ));
   }
 }
 

@@ -65,4 +65,10 @@ class PassStoreListModel with ChangeNotifier {
     watcher?.cancel();
     super.dispose();
   }
+
+  createFolder(String text) {
+    debugPrint("PassStoreListModel: createFolder $text");
+    Directory(_passStorePath + _relativePath + Platform.pathSeparator + text)
+        .create(recursive: true);
+  }
 }
