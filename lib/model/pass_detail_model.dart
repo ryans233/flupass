@@ -17,7 +17,9 @@ class PassDetailModel with ChangeNotifier {
 
   String publicKey = "";
 
-  List<String>? decryptedLines;
+  String? password;
+
+  List<String>? extraInfos;
 
   DetailViewMode mode;
 
@@ -57,14 +59,17 @@ class PassDetailModel with ChangeNotifier {
     if (path.isEmpty) return;
     final file = File(path);
     if ((await file.length() == 0)) {
-      decryptedLines = List.empty(growable: true);
+      password = null;
+      extraInfos = List.empty(growable: true);
       notifyListeners();
     } else {
       try {
         var readAsBytesSync = await file.readAsBytes();
         final result =
             await OpenPGP.decryptBytes(readAsBytesSync, privateKey, passphrase);
-        decryptedLines = String.fromCharCodes(result).trimRight().split("\n");
+        extraInfos = String.fromCharCodes(result).trimRight().split("\n");
+        password = extraInfos?.first;
+        if (password != null) extraInfos?.removeAt(0);
         notifyListeners();
       } catch (e, s) {
         debugPrint(e.toString());
@@ -73,7 +78,9 @@ class PassDetailModel with ChangeNotifier {
   }
 
   clear() {
-    decryptedLines = null;
+    password = null;
+    extraInfos = null;
+    obscurePassword = true;
     notifyListeners();
   }
 
@@ -84,13 +91,14 @@ class PassDetailModel with ChangeNotifier {
 
   save() async {
     if (publicKey.isEmpty) return;
-    if (decryptedLines == null) return;
+    if (extraInfos == null) return;
     try {
-      String s = decryptedLines?.fold<String>(
+      String extra = extraInfos?.fold<String>(
               "", (previousValue, element) => previousValue + element + "\n") ??
           "";
+      String output = (password ?? "") + "\n" + extra;
       var encrypted = await OpenPGP.encryptBytes(
-          Uint8List.fromList(utf8.encode(s)), publicKey);
+          Uint8List.fromList(utf8.encode(output)), publicKey);
       File passFile = File(selectedPassPath);
       await passFile.writeAsBytes(encrypted);
       mode = DetailViewMode.readOnly;

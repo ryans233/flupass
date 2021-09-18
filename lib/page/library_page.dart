@@ -240,12 +240,13 @@ class PassDetailView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final lines =
-        context.select((PassDetailModel model) => model.decryptedLines);
+    final extraInfos =
+        context.select((PassDetailModel model) => model.extraInfos);
     final mode = context.select((PassDetailModel model) => model.mode);
     final obscureText =
         context.select((PassDetailModel model) => model.obscurePassword);
-    var entries = transformToWidgets(context, mode, obscureText, lines);
+    final password = context.select((PassDetailModel model) => model.password);
+    var entries = transformToWidgets(mode, obscureText, password, extraInfos);
     if (mode == DetailViewMode.modify) {
       entries.add(ListTile(
         leading: const Icon(Icons.delete),
@@ -259,7 +260,7 @@ class PassDetailView extends StatelessWidget {
         ),
       ));
     }
-    return lines == null
+    return extraInfos == null
         ? const Center(child: Text("Select a pass file to open"))
         : Scaffold(
             appBar: AppBar(
@@ -305,68 +306,76 @@ class PassDetailView extends StatelessWidget {
                         child: Text("Done".toUpperCase())),
               ],
             ),
-            body: lines.isEmpty
+            body: password == null && extraInfos.isEmpty
                 ? const Center(child: Text("No result."))
                 : ListView(children: entries),
           );
   }
 
   List<Widget> transformToWidgets(
-          context, mode, obscurePassword, List<String>? lines) =>
-      lines == null
+      mode, obscurePassword, password, List<String>? extraInfos) {
+    return List.empty(growable: true)
+      ..add(buildPasswordField(password, obscurePassword, mode))
+      ..addAll(buildExtraInfoFields(extraInfos, mode));
+  }
+
+  List<Widget> buildExtraInfoFields(
+    List<String>? extraInfos,
+    DetailViewMode mode,
+  ) =>
+      extraInfos == null
           ? List.empty()
-          : lines
-              .map((line) {
-                var index = lines.indexOf(line);
-                if (line.isEmpty) {
-                  return null;
-                } else if (index == 0) {
-                  return Stack(
-                    children: [
-                      TextFormField(
-                        obscureText: obscurePassword,
-                        initialValue: line,
-                        decoration: const InputDecoration(
-                          labelText: "Password",
-                        ),
-                        readOnly: mode == DetailViewMode.readOnly,
-                        onChanged: (value) => lines[0] = value,
-                      ),
-                      Positioned(
-                        child: Row(
-                          children: [
-                            IconButton(
-                              icon: const Icon(Icons.copy),
-                              onPressed: () =>
-                                  Clipboard.setData(ClipboardData(text: line)),
-                            ),
-                            IconButton(
-                              icon: Icon(obscurePassword
-                                  ? Icons.visibility
-                                  : Icons.visibility_off),
-                              onPressed: () => context
-                                  .read<PassDetailModel>()
-                                  .toggleObscurePassword(),
-                            ),
-                          ],
-                        ),
-                        right: 0,
-                      ),
-                    ],
-                  );
-                } else {
-                  var split = line.split(': ');
-                  return TextFormField(
-                    initialValue: split.length == 2 ? split.last : line,
-                    decoration: InputDecoration(
-                      labelText: split.length == 2 ? split.first : "No Label",
+          : extraInfos.map((line) {
+              var index = extraInfos.indexOf(line);
+              var split = line.split(': ');
+              return TextFormField(
+                initialValue: split.length == 2 ? split.last : line,
+                decoration: InputDecoration(
+                  labelText: split.length == 2 ? split.first : "No Label",
+                ),
+                readOnly: mode == DetailViewMode.readOnly,
+                onChanged: (value) => extraInfos[index] = value,
+              );
+            }).toList();
+
+  Widget buildPasswordField(
+    String? password,
+    bool obscurePassword,
+    DetailViewMode mode,
+  ) =>
+      Builder(
+          builder: (context) => Stack(
+                children: [
+                  TextFormField(
+                    obscureText: obscurePassword,
+                    initialValue: password,
+                    decoration: const InputDecoration(
+                      labelText: "Password",
                     ),
                     readOnly: mode == DetailViewMode.readOnly,
-                    onChanged: (value) => lines[index] = value,
-                  );
-                }
-              })
-              .where((element) => element != null)
-              .map((widget) => ListTile(title: widget))
-              .toList();
+                    onChanged: (value) =>
+                        context.read<PassDetailModel>().password = value,
+                  ),
+                  Positioned(
+                    child: Row(
+                      children: [
+                        IconButton(
+                          icon: const Icon(Icons.copy),
+                          onPressed: () =>
+                              Clipboard.setData(ClipboardData(text: password)),
+                        ),
+                        IconButton(
+                          icon: Icon(obscurePassword
+                              ? Icons.visibility
+                              : Icons.visibility_off),
+                          onPressed: () => context
+                              .read<PassDetailModel>()
+                              .toggleObscurePassword(),
+                        ),
+                      ],
+                    ),
+                    right: 0,
+                  ),
+                ],
+              ));
 }
