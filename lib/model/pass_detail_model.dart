@@ -17,7 +17,7 @@ class PassDetailModel with ChangeNotifier {
 
   String publicKey = "";
 
-  List<String> decryptedLines = List.empty();
+  List<String>? decryptedLines;
 
   DetailViewMode mode;
 
@@ -36,7 +36,7 @@ class PassDetailModel with ChangeNotifier {
     passphrase = appSettingsModel.passphrase;
     privateKey = appSettingsModel.privateKey;
     publicKey = appSettingsModel.publicKey;
-    decrypt(selectedPassPath);
+    open(selectedPassPath);
   }
 
   onAppSettingsChanged() {
@@ -47,28 +47,33 @@ class PassDetailModel with ChangeNotifier {
     passphrase = appSettingsModel.passphrase;
     privateKey = appSettingsModel.privateKey;
     publicKey = appSettingsModel.publicKey;
-    decrypt(selectedPassPath);
+    open(selectedPassPath);
   }
 
-  decrypt(String path) async {
+  open(String path) async {
     debugPrint("decrypt: path=$path");
     clear();
     selectedPassPath = path;
     if (path.isEmpty) return;
     final file = File(path);
-    try {
-      var readAsBytesSync = await file.readAsBytes();
-      final result =
-          await OpenPGP.decryptBytes(readAsBytesSync, privateKey, passphrase);
-      decryptedLines = String.fromCharCodes(result).trimRight().split("\n");
+    if ((await file.length() == 0)) {
+      decryptedLines = List.empty(growable: true);
       notifyListeners();
-    } catch (e, s) {
-      debugPrint(e.toString());
+    } else {
+      try {
+        var readAsBytesSync = await file.readAsBytes();
+        final result =
+            await OpenPGP.decryptBytes(readAsBytesSync, privateKey, passphrase);
+        decryptedLines = String.fromCharCodes(result).trimRight().split("\n");
+        notifyListeners();
+      } catch (e, s) {
+        debugPrint(e.toString());
+      }
     }
   }
 
   clear() {
-    decryptedLines = List.empty();
+    decryptedLines = null;
     notifyListeners();
   }
 
@@ -79,9 +84,11 @@ class PassDetailModel with ChangeNotifier {
 
   save() async {
     if (publicKey.isEmpty) return;
+    if (decryptedLines == null) return;
     try {
-      String s = decryptedLines.fold<String>(
-          "", (previousValue, element) => previousValue + element + "\n");
+      String s = decryptedLines?.fold<String>(
+              "", (previousValue, element) => previousValue + element + "\n") ??
+          "";
       var encrypted = await OpenPGP.encryptBytes(
           Uint8List.fromList(utf8.encode(s)), publicKey);
       File passFile = File(selectedPassPath);

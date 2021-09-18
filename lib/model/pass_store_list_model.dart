@@ -6,6 +6,8 @@ import 'package:flutter/foundation.dart';
 import 'package:path/path.dart' as p;
 
 class PassStoreListModel with ChangeNotifier {
+  static const String extensionNameGpg = 'gpg';
+
   final AppSettingsModel appSettingsModel;
 
   String _passStorePath = "";
@@ -42,7 +44,8 @@ class PassStoreListModel with ChangeNotifier {
       final basename = p.basename(event.path);
       return !basename.startsWith(".") &&
           (event is Directory ||
-              (event is File && p.extension(event.path) == ".gpg"));
+              (event is File &&
+                  p.extension(event.path) == "." + extensionNameGpg));
     }).toList();
     notifyListeners();
   }
@@ -63,6 +66,17 @@ class PassStoreListModel with ChangeNotifier {
   void dispose() {
     watcher?.cancel();
     super.dispose();
+  }
+
+  createPassFile(String text) {
+    debugPrint("PassStoreListModel: createPassFile $text");
+    File(_passStorePath +
+            _relativePath +
+            Platform.pathSeparator +
+            text +
+            "." +
+            extensionNameGpg)
+        .create(recursive: true);
   }
 
   createFolder(String text) {

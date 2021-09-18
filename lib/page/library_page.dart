@@ -51,6 +51,7 @@ class LibraryPage extends StatelessWidget {
               backgroundColor: Colors.deepOrange,
               foregroundColor: Colors.white,
               label: 'New pass',
+              onTap: () => showCreatePassDialog(context),
             ),
             SpeedDialChild(
               child: Icon(Icons.folder),
@@ -63,6 +64,50 @@ class LibraryPage extends StatelessWidget {
         ),
       );
     });
+  }
+
+  showCreatePassDialog(BuildContext context) {
+    final textEditingController = TextEditingController();
+    final formKey = GlobalKey<FormState>();
+    showDialog(
+        context: context,
+        builder: (_) => AlertDialog(
+              title: Text('New pass'),
+              content: Form(
+                key: formKey,
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    TextFormField(
+                      decoration: InputDecoration(
+                        hintText: 'Pass name',
+                        helperText: 'Filename would be end up with .gpg',
+                      ),
+                      controller: textEditingController,
+                      validator: (value) {
+                        if (value == null || value.isEmpty) {
+                          return 'Please enter a valid pass name';
+                        }
+                        return null;
+                      },
+                    ),
+                  ],
+                ),
+              ),
+              actions: [
+                TextButton(
+                  child: Text('Create'),
+                  onPressed: () {
+                    if (formKey.currentState?.validate() == true) {
+                      Navigator.of(context).pop();
+                      context
+                          .read<PassStoreListModel>()
+                          .createPassFile(textEditingController.text);
+                    }
+                  },
+                ),
+              ],
+            ));
   }
 
   showCreateFolderDialog(BuildContext context) {
@@ -100,7 +145,7 @@ class LibraryPage extends StatelessWidget {
                       Navigator.of(context).pop();
                       context
                           .read<PassStoreListModel>()
-                          .createFolder(textEditingController.text);
+                          .createPassFile(textEditingController.text);
                     }
                   },
                 ),
@@ -168,7 +213,7 @@ class PassListView extends StatelessWidget {
                             ),
                           );
                         } else {
-                          context.read<PassDetailModel>().decrypt(entry.path);
+                          context.read<PassDetailModel>().open(entry.path);
                         }
                       } else if (entry is Directory) {
                         context
@@ -214,8 +259,8 @@ class PassDetailView extends StatelessWidget {
         ),
       ));
     }
-    return lines.isEmpty
-        ? const Center(child: Text("Empty"))
+    return lines == null
+        ? const Center(child: Text("Select a pass file to open"))
         : Scaffold(
             appBar: AppBar(
               title: Text(
@@ -267,59 +312,61 @@ class PassDetailView extends StatelessWidget {
   }
 
   List<Widget> transformToWidgets(
-          context, mode, obscurePassword, List<String> lines) =>
-      lines
-          .map((line) {
-            var index = lines.indexOf(line);
-            if (line.isEmpty) {
-              return null;
-            } else if (index == 0) {
-              return Stack(
-                children: [
-                  TextFormField(
-                    obscureText: obscurePassword,
-                    initialValue: line,
-                    decoration: const InputDecoration(
-                      labelText: "Password",
+          context, mode, obscurePassword, List<String>? lines) =>
+      lines == null
+          ? List.empty()
+          : lines
+              .map((line) {
+                var index = lines.indexOf(line);
+                if (line.isEmpty) {
+                  return null;
+                } else if (index == 0) {
+                  return Stack(
+                    children: [
+                      TextFormField(
+                        obscureText: obscurePassword,
+                        initialValue: line,
+                        decoration: const InputDecoration(
+                          labelText: "Password",
+                        ),
+                        readOnly: mode == DetailViewMode.readOnly,
+                        onChanged: (value) => lines[0] = value,
+                      ),
+                      Positioned(
+                        child: Row(
+                          children: [
+                            IconButton(
+                              icon: const Icon(Icons.copy),
+                              onPressed: () =>
+                                  Clipboard.setData(ClipboardData(text: line)),
+                            ),
+                            IconButton(
+                              icon: Icon(obscurePassword
+                                  ? Icons.visibility
+                                  : Icons.visibility_off),
+                              onPressed: () => context
+                                  .read<PassDetailModel>()
+                                  .toggleObscurePassword(),
+                            ),
+                          ],
+                        ),
+                        right: 0,
+                      ),
+                    ],
+                  );
+                } else {
+                  var split = line.split(': ');
+                  return TextFormField(
+                    initialValue: split.length == 2 ? split.last : line,
+                    decoration: InputDecoration(
+                      labelText: split.length == 2 ? split.first : "No Label",
                     ),
                     readOnly: mode == DetailViewMode.readOnly,
-                    onChanged: (value) => lines[0] = value,
-                  ),
-                  Positioned(
-                    child: Row(
-                      children: [
-                        IconButton(
-                          icon: const Icon(Icons.copy),
-                          onPressed: () =>
-                              Clipboard.setData(ClipboardData(text: line)),
-                        ),
-                        IconButton(
-                          icon: Icon(obscurePassword
-                              ? Icons.visibility
-                              : Icons.visibility_off),
-                          onPressed: () => context
-                              .read<PassDetailModel>()
-                              .toggleObscurePassword(),
-                        ),
-                      ],
-                    ),
-                    right: 0,
-                  ),
-                ],
-              );
-            } else {
-              var split = line.split(': ');
-              return TextFormField(
-                initialValue: split.length == 2 ? split.last : line,
-                decoration: InputDecoration(
-                  labelText: split.length == 2 ? split.first : "No Label",
-                ),
-                readOnly: mode == DetailViewMode.readOnly,
-                onChanged: (value) => lines[index] = value,
-              );
-            }
-          })
-          .where((element) => element != null)
-          .map((widget) => ListTile(title: widget))
-          .toList();
+                    onChanged: (value) => lines[index] = value,
+                  );
+                }
+              })
+              .where((element) => element != null)
+              .map((widget) => ListTile(title: widget))
+              .toList();
 }
