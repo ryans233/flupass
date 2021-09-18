@@ -173,7 +173,7 @@ class PassListView extends StatelessWidget {
                       } else if (entry is Directory) {
                         context
                             .read<PassStoreListModel>()
-                            .navigateToFolder(basename(entry.path));
+                            .navigateToFolder(entry.path);
                       }
                     });
               },

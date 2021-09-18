@@ -10,7 +10,7 @@ class PassStoreListModel with ChangeNotifier {
 
   String _passStorePath = "";
 
-  String _relativePath = "";
+  String _relativePath = Platform.pathSeparator;
 
   String get relativePath => _relativePath;
 
@@ -47,16 +47,15 @@ class PassStoreListModel with ChangeNotifier {
     notifyListeners();
   }
 
-  navigateToFolder(String name) {
-    _relativePath = "${Platform.pathSeparator}$name";
+  navigateToFolder(String path) {
+    _relativePath = path.replaceFirst(_passStorePath, "");
     updatePassStore();
   }
 
   navigateToParentFolder() {
-    final uri = Uri.parse(_relativePath);
-    final pathSegments = uri.pathSegments.toList();
-    pathSegments.removeLast();
-    final name = pathSegments.join(Platform.pathSeparator);
+    final list = _relativePath.split(Platform.pathSeparator);
+    list.removeLast();
+    final name = list.join(Platform.pathSeparator);
     navigateToFolder(name);
   }
 
