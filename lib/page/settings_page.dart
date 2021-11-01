@@ -40,8 +40,10 @@ class SettingsPage extends StatelessWidget {
               final result = await FilePicker.platform
                   .pickFiles(allowedExtensions: ["asc"]);
               if (result != null) {
+                final path = result.files.first.path;
+                if (path == null) return;
                 context.read<AppSettingsModel>().privateKey =
-                    await File(result.files.first.path).readAsString();
+                    await File(path).readAsString();
               } else {
                 // User canceled the picker
               }
@@ -58,8 +60,10 @@ class SettingsPage extends StatelessWidget {
               final result = await FilePicker.platform
                   .pickFiles(allowedExtensions: ["asc"]);
               if (result != null) {
+                final path = result.files.first.path;
+                if (path == null) return;
                 context.read<AppSettingsModel>().publicKey =
-                    await File(result.files.first.path).readAsString();
+                    await File(path).readAsString();
               } else {
                 // User canceled the picker
               }
