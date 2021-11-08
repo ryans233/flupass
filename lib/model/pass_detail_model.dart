@@ -3,7 +3,7 @@ import 'dart:io';
 import 'dart:typed_data';
 
 import 'package:flupass/model/app_settings_model.dart';
-import 'package:flutter/foundation.dart';
+import 'package:flutter/material.dart';
 import 'package:openpgp/openpgp.dart';
 
 class PassDetailModel with ChangeNotifier {
@@ -17,13 +17,13 @@ class PassDetailModel with ChangeNotifier {
 
   String publicKey = "";
 
-  String? password;
-
   List<String>? extraInfos;
 
   DetailViewMode mode;
 
   bool obscurePassword = true;
+
+  final TextEditingController passwordInputController = TextEditingController();
 
   toggleObscurePassword() {
     obscurePassword = !obscurePassword;
@@ -38,7 +38,14 @@ class PassDetailModel with ChangeNotifier {
     passphrase = appSettingsModel.passphrase;
     privateKey = appSettingsModel.privateKey;
     publicKey = appSettingsModel.publicKey;
+
     open(selectedPassPath);
+  }
+
+  @override
+  dispose() {
+    passwordInputController.dispose();
+    super.dispose();
   }
 
   onAppSettingsChanged() {
@@ -59,7 +66,7 @@ class PassDetailModel with ChangeNotifier {
     if (path.isEmpty) return;
     final file = File(path);
     if ((await file.length() == 0)) {
-      password = null;
+      setPassword("");
       extraInfos = List.empty(growable: true);
       notifyListeners();
     } else {
@@ -68,8 +75,8 @@ class PassDetailModel with ChangeNotifier {
         final result =
             await OpenPGP.decryptBytes(readAsBytesSync, privateKey, passphrase);
         extraInfos = String.fromCharCodes(result).trimRight().split("\n");
-        password = extraInfos?.first;
-        if (password != null) extraInfos?.removeAt(0);
+        passwordInputController.text = extraInfos?.first ?? "";
+        if (extraInfos?.first != null) extraInfos?.removeAt(0);
         notifyListeners();
       } catch (e, s) {
         debugPrint(e.toString());
@@ -78,7 +85,7 @@ class PassDetailModel with ChangeNotifier {
   }
 
   clear() {
-    password = null;
+    setPassword("");
     extraInfos = null;
     obscurePassword = true;
     notifyListeners();
@@ -87,6 +94,9 @@ class PassDetailModel with ChangeNotifier {
   setMode(DetailViewMode mode) {
     this.mode = mode;
     notifyListeners();
+    if (mode == DetailViewMode.readOnly) {
+      open(selectedPassPath);
+    }
   }
 
   save() async {
@@ -96,7 +106,8 @@ class PassDetailModel with ChangeNotifier {
       String extra = extraInfos?.fold<String>(
               "", (previousValue, element) => previousValue + element + "\n") ??
           "";
-      String output = (password ?? "") + "\n" + extra;
+      String output =
+          passwordInputController.text.toString().trim() + "\n" + extra;
       var encrypted = await OpenPGP.encryptBytes(
           Uint8List.fromList(utf8.encode(output)), publicKey);
       File passFile = File(selectedPassPath);
@@ -116,6 +127,10 @@ class PassDetailModel with ChangeNotifier {
     } catch (e, s) {
       debugPrint(e.toString());
     }
+  }
+
+  setPassword(String password) {
+    passwordInputController.text = password;
   }
 }
 
