@@ -1,7 +1,5 @@
 import 'dart:io';
 
-import 'package:flupass/model/app_settings_model.dart';
-import 'package:flupass/model/pass_detail_model.dart';
 import 'package:flupass/model/pass_store_list_model.dart';
 import 'package:flupass/page/page.dart';
 import 'package:flupass/routes.dart';
@@ -9,15 +7,13 @@ import 'package:flutter/material.dart';
 import 'package:path/path.dart';
 import 'package:provider/provider.dart';
 
-import 'pass_detail_view.dart';
-
 class PassListView extends StatelessWidget {
   const PassListView(
-    this.singleColumn, {
+    this.onItemClick, {
     Key? key,
   }) : super(key: key);
 
-  final bool singleColumn;
+  final void Function(File)? onItemClick;
 
   @override
   Widget build(BuildContext context) {
@@ -63,22 +59,7 @@ class PassListView extends StatelessWidget {
                     title: Text(basename(entry.path)),
                     onTap: () {
                       if (entry is File) {
-                        if (singleColumn) {
-                          Navigator.of(context).push(
-                            MaterialPageRoute(
-                              builder: (context) => Material(
-                                child: ChangeNotifierProvider(
-                                  child: PassDetailView(singleColumn),
-                                  create: (_) => PassDetailModel(
-                                      context.read<AppSettingsModel>(),
-                                      selectedPassPath: entry.path),
-                                ),
-                              ),
-                            ),
-                          );
-                        } else {
-                          context.read<PassDetailModel>().open(entry.path);
-                        }
+                        onItemClick?.call(entry);
                       } else if (entry is Directory) {
                         context
                             .read<PassStoreListModel>()

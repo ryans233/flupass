@@ -26,13 +26,6 @@ class MyApp extends StatelessWidget {
           create: (_) => AppSettingsModel(),
           lazy: false,
         ),
-        ChangeNotifierProxyProvider<AppSettingsModel, PassStoreListModel>(
-          create: (BuildContext context) =>
-              PassStoreListModel(context.read<AppSettingsModel>()),
-          update: (context, value, previous) =>
-              previous!..onAppSettingsChanged(),
-          lazy: false,
-        ),
       ],
       child: MaterialApp(
         title: 'flupass',

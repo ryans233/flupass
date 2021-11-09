@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flupass/model/app_settings_model.dart';
 import 'package:flupass/model/pass_detail_model.dart';
 import 'package:flupass/model/pass_store_list_model.dart';
@@ -12,52 +14,79 @@ class LibraryPage extends StatelessWidget {
     Key? key,
   }) : super(key: key);
 
-  static const _maxColumnWidth = 500;
+  static const _maxColumnWidth = 600;
 
   @override
   Widget build(BuildContext context) {
     return LayoutBuilder(builder: (context, constraints) {
-      bool singleColumn = constraints.maxWidth < _maxColumnWidth;
-      return Scaffold(
-        body: singleColumn
-            ? PassListView(singleColumn)
-            : ChangeNotifierProxyProvider<AppSettingsModel, PassDetailModel>(
-                create: (context) =>
-                    PassDetailModel(context.read<AppSettingsModel>()),
-                update: (context, model, previous) =>
-                    previous!..onAppSettingsChanged(),
-                child: Row(
+      bool singleColumn = constraints.maxWidth < _maxColumnWidth ||
+          constraints.maxWidth < constraints.maxHeight;
+      return MultiProvider(
+        providers: [
+          ChangeNotifierProxyProvider<AppSettingsModel, PassStoreListModel>(
+            create: (BuildContext context) =>
+                PassStoreListModel(context.read<AppSettingsModel>()),
+            update: (context, value, previous) =>
+                previous!..onAppSettingsChanged(),
+          ),
+          ChangeNotifierProxyProvider<AppSettingsModel, PassDetailModel>(
+            create: (context) =>
+                PassDetailModel(context.read<AppSettingsModel>()),
+            update: (context, model, previous) =>
+                previous!..onAppSettingsChanged(),
+          ),
+        ],
+        builder: (context, child) => Scaffold(
+          body: singleColumn
+              ? PassListView((File file) {
+                  context.read<PassDetailModel>().open(file.path);
+                  Navigator.of(context).push(
+                    MaterialPageRoute(
+                      builder: (_) => ChangeNotifierProvider.value(
+                        value: context.read<PassDetailModel>(),
+                        builder: (context, child) => PassDetailView(() {
+                          Navigator.of(context).pop();
+                          context.read<PassDetailModel>().clear();
+                        }),
+                      ),
+                    ),
+                  );
+                })
+              : Row(
                   children: [
                     Expanded(
                       flex: 2,
-                      child: PassListView(singleColumn),
+                      child: PassListView((File file) {
+                        context.read<PassDetailModel>().open(file.path);
+                      }),
                     ),
                     Expanded(
                       flex: 3,
-                      child: PassDetailView(singleColumn),
+                      child: PassDetailView(
+                          () => context.read<PassDetailModel>().clear()),
                     )
                   ],
                 ),
+          floatingActionButton: SpeedDial(
+            icon: Icons.add,
+            tooltip: "Create",
+            children: [
+              SpeedDialChild(
+                child: const Icon(Icons.file_present),
+                backgroundColor: Colors.deepOrange,
+                foregroundColor: Colors.white,
+                label: 'New pass',
+                onTap: () => showCreatePassDialog(context),
               ),
-        floatingActionButton: SpeedDial(
-          icon: Icons.add,
-          tooltip: "Create",
-          children: [
-            SpeedDialChild(
-              child: Icon(Icons.file_present),
-              backgroundColor: Colors.deepOrange,
-              foregroundColor: Colors.white,
-              label: 'New pass',
-              onTap: () => showCreatePassDialog(context),
-            ),
-            SpeedDialChild(
-              child: Icon(Icons.folder),
-              backgroundColor: Colors.indigo,
-              foregroundColor: Colors.white,
-              label: 'New folder',
-              onTap: () => showCreateFolderDialog(context),
-            ),
-          ],
+              SpeedDialChild(
+                child: const Icon(Icons.folder),
+                backgroundColor: Colors.indigo,
+                foregroundColor: Colors.white,
+                label: 'New folder',
+                onTap: () => showCreateFolderDialog(context),
+              ),
+            ],
+          ),
         ),
       );
     });
@@ -69,14 +98,14 @@ class LibraryPage extends StatelessWidget {
     showDialog(
         context: context,
         builder: (_) => AlertDialog(
-              title: Text('New pass'),
+              title: const Text('New pass'),
               content: Form(
                 key: formKey,
                 child: Column(
                   mainAxisSize: MainAxisSize.min,
                   children: [
                     TextFormField(
-                      decoration: InputDecoration(
+                      decoration: const InputDecoration(
                         hintText: 'Pass name',
                         helperText: 'Filename would be end up with .gpg',
                       ),
@@ -93,7 +122,7 @@ class LibraryPage extends StatelessWidget {
               ),
               actions: [
                 TextButton(
-                  child: Text('Create'),
+                  child: const Text('Create'),
                   onPressed: () {
                     if (formKey.currentState?.validate() == true) {
                       Navigator.of(context).pop();
@@ -113,7 +142,7 @@ class LibraryPage extends StatelessWidget {
     showDialog(
         context: context,
         builder: (_) => AlertDialog(
-              title: Text('New folder'),
+              title: const Text('New folder'),
               content: Form(
                 key: formKey,
                 child: Column(
@@ -122,7 +151,8 @@ class LibraryPage extends StatelessWidget {
                     Text("Current path: " +
                         context.read<PassStoreListModel>().relativePath),
                     TextFormField(
-                      decoration: InputDecoration(hintText: 'Folder name'),
+                      decoration:
+                          const InputDecoration(hintText: 'Folder name'),
                       controller: textEditingController,
                       validator: (value) {
                         if (value == null || value.isEmpty) {
@@ -136,7 +166,7 @@ class LibraryPage extends StatelessWidget {
               ),
               actions: [
                 TextButton(
-                  child: Text('Create'),
+                  child: const Text('Create'),
                   onPressed: () {
                     if (formKey.currentState?.validate() == true) {
                       Navigator.of(context).pop();

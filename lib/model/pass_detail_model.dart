@@ -7,7 +7,7 @@ import 'package:flutter/material.dart';
 import 'package:openpgp/openpgp.dart';
 
 class PassDetailModel with ChangeNotifier {
-  String selectedPassPath;
+  String? selectedPassPath;
 
   AppSettingsModel appSettingsModel;
 
@@ -33,12 +33,11 @@ class PassDetailModel with ChangeNotifier {
   PassDetailModel(
     this.appSettingsModel, {
     this.mode = DetailViewMode.readOnly,
-    this.selectedPassPath = "",
+    this.selectedPassPath,
   }) {
     passphrase = appSettingsModel.passphrase;
     privateKey = appSettingsModel.privateKey;
     publicKey = appSettingsModel.publicKey;
-
     open(selectedPassPath);
   }
 
@@ -59,9 +58,9 @@ class PassDetailModel with ChangeNotifier {
     open(selectedPassPath);
   }
 
-  open(String path) async {
-    debugPrint("decrypt: path=$path");
+  open(String? path) async {
     clear();
+    if (path == null) return;
     selectedPassPath = path;
     if (path.isEmpty) return;
     final file = File(path);
@@ -86,8 +85,10 @@ class PassDetailModel with ChangeNotifier {
 
   clear() {
     setPassword("");
+    selectedPassPath = null;
     extraInfos = null;
     obscurePassword = true;
+    mode = DetailViewMode.readOnly;
     notifyListeners();
   }
 
@@ -102,6 +103,8 @@ class PassDetailModel with ChangeNotifier {
   save() async {
     if (publicKey.isEmpty) return;
     if (extraInfos == null) return;
+    final path = selectedPassPath;
+    if (path == null) return;
     try {
       String extra = extraInfos?.fold<String>(
               "", (previousValue, element) => previousValue + element + "\n") ??
@@ -110,7 +113,7 @@ class PassDetailModel with ChangeNotifier {
           passwordInputController.text.toString().trim() + "\n" + extra;
       var encrypted = await OpenPGP.encryptBytes(
           Uint8List.fromList(utf8.encode(output)), publicKey);
-      File passFile = File(selectedPassPath);
+      File passFile = File(path);
       await passFile.writeAsBytes(encrypted);
       mode = DetailViewMode.readOnly;
       notifyListeners();
@@ -121,7 +124,9 @@ class PassDetailModel with ChangeNotifier {
 
   delete() async {
     try {
-      File passFile = File(selectedPassPath);
+      final path = selectedPassPath;
+      if (path == null) return;
+      File passFile = File(path);
       await passFile.delete();
       clear();
     } catch (e, s) {

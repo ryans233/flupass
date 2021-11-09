@@ -5,30 +5,15 @@ import 'package:flutter/services.dart';
 import 'package:path/path.dart';
 import 'package:provider/provider.dart';
 
-class PassDetailView extends StatefulWidget {
-  const PassDetailView(
-    this.singleColumn, {
-    Key? key,
-  }) : super(key: key);
+class PassDetailView extends StatelessWidget {
+  const PassDetailView(this.onExit, {Key? key}) : super(key: key);
 
-  final bool singleColumn;
-  @override
-  State<PassDetailView> createState() => _PassDetailViewState();
-}
-
-class _PassDetailViewState extends State<PassDetailView> {
-  @override
-  void initState() {
-    super.initState();
-  }
-
-  @override
-  void dispose() {
-    super.dispose();
-  }
+  final VoidCallback? onExit;
 
   @override
   Widget build(BuildContext context) {
+    final path =
+        context.select((PassDetailModel model) => model.selectedPassPath);
     final extraInfos =
         context.select((PassDetailModel model) => model.extraInfos);
     final mode = context.select((PassDetailModel model) => model.mode);
@@ -36,7 +21,7 @@ class _PassDetailViewState extends State<PassDetailView> {
         context.select((PassDetailModel model) => model.obscurePassword);
     final password = context
         .select((PassDetailModel model) => model.passwordInputController.text);
-    var entries = transformToWidgets(mode, obscureText, password, extraInfos);
+    final entries = transformToWidgets(mode, obscureText, password, extraInfos);
     if (mode == DetailViewMode.modify) {
       entries.add(ListTile(
         leading: const Icon(Icons.delete),
@@ -50,13 +35,12 @@ class _PassDetailViewState extends State<PassDetailView> {
         ),
       ));
     }
-    return extraInfos == null
-        ? const Center(child: Text("Select a pass file to open"))
+    return path == null
+        ? const Scaffold()
         : Scaffold(
             appBar: AppBar(
               title: Text(
-                context.select((PassDetailModel model) =>
-                    basename(model.selectedPassPath)),
+                basename(path),
                 style: const TextStyle(
                   color: Colors.black87,
                 ),
@@ -95,10 +79,7 @@ class _PassDetailViewState extends State<PassDetailView> {
                       ),
                     );
                   } else {
-                    if (widget.singleColumn) {
-                      Navigator.of(context).pop();
-                    }
-                    context.read<PassDetailModel>().clear();
+                    onExit?.call();
                   }
                 },
               ),
@@ -117,9 +98,11 @@ class _PassDetailViewState extends State<PassDetailView> {
                         child: Text("Done".toUpperCase())),
               ],
             ),
-            body: extraInfos.isEmpty
-                ? const Center(child: Text("No result."))
-                : ListView(children: entries),
+            body: extraInfos == null
+                ? const Center(child: CircularProgressIndicator())
+                : extraInfos.isEmpty
+                    ? const Center(child: Text("No result."))
+                    : ListView(children: entries),
           );
   }
 
