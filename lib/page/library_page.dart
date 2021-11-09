@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:io';
 
 import 'package:flupass/model/app_settings_model.dart';
@@ -9,18 +10,26 @@ import 'package:flutter/material.dart';
 import 'package:flutter_speed_dial/flutter_speed_dial.dart';
 import 'package:provider/provider.dart';
 
-class LibraryPage extends StatelessWidget {
+class LibraryPage extends StatefulWidget {
   const LibraryPage({
     Key? key,
   }) : super(key: key);
 
+  @override
+  State<LibraryPage> createState() => _LibraryPageState();
+}
+
+class _LibraryPageState extends State<LibraryPage> {
   static const _maxColumnWidth = 600;
+  static const _minColumnWidth = 400;
+  double width = 400.0;
 
   @override
   Widget build(BuildContext context) {
     return LayoutBuilder(builder: (context, constraints) {
       bool singleColumn = constraints.maxWidth < _maxColumnWidth ||
-          constraints.maxWidth < constraints.maxHeight;
+          constraints.maxWidth < constraints.maxHeight ||
+          constraints.maxWidth - width < _minColumnWidth;
       return MultiProvider(
         providers: [
           ChangeNotifierProxyProvider<AppSettingsModel, PassStoreListModel>(
@@ -54,14 +63,35 @@ class LibraryPage extends StatelessWidget {
                 })
               : Row(
                   children: [
-                    Expanded(
-                      flex: 2,
+                    SizedBox(
+                      width: width,
                       child: PassListView((File file) {
                         context.read<PassDetailModel>().open(file.path);
                       }),
                     ),
+                    MouseRegion(
+                      cursor: SystemMouseCursors.resizeColumn,
+                      child: GestureDetector(
+                        child: Container(
+                          height: double.infinity,
+                          color: Colors.grey[100],
+                          child: const Center(
+                            child: Icon(
+                              Icons.drag_indicator,
+                              size: 12,
+                            ),
+                          ),
+                        ),
+                        onHorizontalDragUpdate: (details) => setState(() {
+                          if (details.globalPosition.dx <=
+                                  constraints.maxWidth - _minColumnWidth &&
+                              details.globalPosition.dx >= _minColumnWidth) {
+                            width = details.globalPosition.dx;
+                          }
+                        }),
+                      ),
+                    ),
                     Expanded(
-                      flex: 3,
                       child: PassDetailView(
                           () => context.read<PassDetailModel>().clear()),
                     )
