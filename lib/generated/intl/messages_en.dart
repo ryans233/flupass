@@ -110,6 +110,8 @@ class MessageLookup extends MessageLookupByLibrary {
             MessageLookupByLibrary.simpleMessage("Set"),
         "pageSettingsSettingEntryValueUnset":
             MessageLookupByLibrary.simpleMessage("Unset"),
+        "pageSettingsSettingEntryVersionTitle":
+            MessageLookupByLibrary.simpleMessage("Version"),
         "pageSettingsTitle": MessageLookupByLibrary.simpleMessage("Settings"),
         "viewPassDetailButtonDelete":
             MessageLookupByLibrary.simpleMessage("Delete")

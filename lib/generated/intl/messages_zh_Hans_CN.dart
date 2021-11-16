@@ -106,6 +106,8 @@ class MessageLookup extends MessageLookupByLibrary {
             MessageLookupByLibrary.simpleMessage("已设定"),
         "pageSettingsSettingEntryValueUnset":
             MessageLookupByLibrary.simpleMessage("未设定"),
+        "pageSettingsSettingEntryVersionTitle":
+            MessageLookupByLibrary.simpleMessage("版本"),
         "pageSettingsTitle": MessageLookupByLibrary.simpleMessage("设置"),
         "viewPassDetailButtonDelete": MessageLookupByLibrary.simpleMessage("删除")
       };

@@ -509,6 +509,16 @@ class S {
       args: [],
     );
   }
+
+  /// `Version`
+  String get pageSettingsSettingEntryVersionTitle {
+    return Intl.message(
+      'Version',
+      name: 'pageSettingsSettingEntryVersionTitle',
+      desc: '',
+      args: [],
+    );
+  }
 }
 
 class AppLocalizationDelegate extends LocalizationsDelegate<S> {

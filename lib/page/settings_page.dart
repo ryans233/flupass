@@ -4,6 +4,7 @@ import 'package:file_picker/file_picker.dart';
 import 'package:flupass/generated/l10n.dart';
 import 'package:flupass/model/app_settings_model.dart';
 import 'package:flutter/material.dart';
+import 'package:package_info_plus/package_info_plus.dart';
 import 'package:provider/provider.dart';
 
 class SettingsPage extends StatelessWidget {
@@ -131,6 +132,20 @@ class SettingsPage extends StatelessWidget {
               );
             },
           ),
+          FutureBuilder<PackageInfo>(
+            builder: (context, snapshot) => snapshot.hasData
+                ? ListTile(
+                    title: Text(
+                        S.of(context).pageSettingsSettingEntryVersionTitle),
+                    subtitle: Text(snapshot.data?.version.toString() ?? ""),
+                    onTap: () => showAboutDialog(
+                      context: context,
+                      applicationVersion: snapshot.data?.version.toString(),
+                    ),
+                  )
+                : const SizedBox.shrink(),
+            future: PackageInfo.fromPlatform(),
+          )
         ],
       ),
     );
