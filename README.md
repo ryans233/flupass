@@ -1,16 +1,42 @@
 # flupass
 
-A new Flutter project.
+![GitHub release (latest by date)](https://img.shields.io/github/v/release/ryans233/flupass?style=flat-square) ![GitHub](https://img.shields.io/github/license/ryans233/flupass?color=orange&style=flat-square)
 
-## Getting Started
+A cross-platform open source password manager inspired by pass, the standard UNIX password manager.
 
-This project is a starting point for a Flutter application.
+This program is written in Flutter and still WIP. Feel free to open up a PR or make a feature request!
 
-A few resources to get you started if this is your first Flutter project:
+## Feature
+- Pass file support
+  - Create
+  - Read
+  - Update (only password field and existed fields by far)
+  - Delete
+- Folder support
+- OpenPGP file encryption / decryption
+- Password Generator
+- 2 Columns UI in landscape mode
+- i18n
 
-- [Lab: Write your first Flutter app](https://flutter.dev/docs/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://flutter.dev/docs/cookbook)
+## To-do
 
-For help getting started with Flutter, view our
-[online documentation](https://flutter.dev/docs), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+- [ ] First time setup wizard
+- [ ] Search (basic file name search support & enhanced indexing search)
+- [ ] Import & Export
+- [ ] Synchronization
+- [ ] TOTP integration
+- [ ] Dark mode
+- [ ] Mobile support (scoped storage, Auto-fill, biometrics option, etc.)
+- [ ] Better desktop browser experience (dedicated browser extension or integrate with browserpass)
+- [ ] Maybe a stylish icon?
+
+## Build
+
+### Requirements
+
+- Flutter beta channel (>=2.8.0)
+
+```shell
+flutter run --release
+```
+
