@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:flupass/generated/l10n.dart';
 import 'package:flupass/model/pass_store_list_model.dart';
 import 'package:flupass/page/page.dart';
 import 'package:flupass/routes.dart';
@@ -39,7 +40,8 @@ class PassListView extends StatelessWidget {
                         Navigator.of(context).pushNamed(Routes.settings),
                     icon: const Icon(Icons.settings)),
               ],
-              title: Text(shouldShowTitle ? 'flupass' : relativePath),
+              title:
+                  Text(shouldShowTitle ? S.of(context).appName : relativePath),
               leading: shouldShowTitle
                   ? const SizedBox.shrink()
                   : IconButton(

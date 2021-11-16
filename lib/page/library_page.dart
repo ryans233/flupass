@@ -1,6 +1,6 @@
-import 'dart:async';
 import 'dart:io';
 
+import 'package:flupass/generated/l10n.dart';
 import 'package:flupass/model/app_settings_model.dart';
 import 'package:flupass/model/pass_detail_model.dart';
 import 'package:flupass/model/pass_store_list_model.dart';
@@ -99,20 +99,20 @@ class _LibraryPageState extends State<LibraryPage> {
                 ),
           floatingActionButton: SpeedDial(
             icon: Icons.add,
-            tooltip: "Create",
+            tooltip: S.of(context).pageLibraryDialCreate,
             children: [
               SpeedDialChild(
                 child: const Icon(Icons.file_present),
                 backgroundColor: Colors.deepOrange,
                 foregroundColor: Colors.white,
-                label: 'New pass',
+                label: S.of(context).pageLibraryDialActionNewPass,
                 onTap: () => showCreatePassDialog(context),
               ),
               SpeedDialChild(
                 child: const Icon(Icons.folder),
                 backgroundColor: Colors.indigo,
                 foregroundColor: Colors.white,
-                label: 'New folder',
+                label: S.of(context).pageLibraryDialActionNewFolder,
                 onTap: () => showCreateFolderDialog(context),
               ),
             ],
@@ -128,21 +128,23 @@ class _LibraryPageState extends State<LibraryPage> {
     showDialog(
         context: context,
         builder: (_) => AlertDialog(
-              title: const Text('New pass'),
+              title: Text(S.of(context).dialogNewPassTitle),
               content: Form(
                 key: formKey,
                 child: Column(
                   mainAxisSize: MainAxisSize.min,
                   children: [
                     TextFormField(
-                      decoration: const InputDecoration(
-                        hintText: 'Pass name',
-                        helperText: 'Filename would be end up with .gpg',
+                      decoration: InputDecoration(
+                        hintText: S.of(context).dialogNewPassHintPassName,
+                        helperText: S.of(context).dialogNewPassHelperPassName,
                       ),
                       controller: textEditingController,
                       validator: (value) {
                         if (value == null || value.isEmpty) {
-                          return 'Please enter a valid pass name';
+                          return S
+                              .of(context)
+                              .dialogNewPassHintInvalidHintPassName;
                         }
                         return null;
                       },
@@ -152,7 +154,7 @@ class _LibraryPageState extends State<LibraryPage> {
               ),
               actions: [
                 TextButton(
-                  child: const Text('Create'),
+                  child: Text(S.of(context).dialogNewPassButtonCreate),
                   onPressed: () {
                     if (formKey.currentState?.validate() == true) {
                       Navigator.of(context).pop();
@@ -172,21 +174,24 @@ class _LibraryPageState extends State<LibraryPage> {
     showDialog(
         context: context,
         builder: (_) => AlertDialog(
-              title: const Text('New folder'),
+              title: Text(S.of(context).dialogNewFolderTitle),
               content: Form(
                 key: formKey,
                 child: Column(
                   mainAxisSize: MainAxisSize.min,
                   children: [
-                    Text("Current path: " +
-                        context.read<PassStoreListModel>().relativePath),
+                    Text(S.of(context).dialogNewFolderCurrentPath(
+                        context.read<PassStoreListModel>().relativePath)),
                     TextFormField(
-                      decoration:
-                          const InputDecoration(hintText: 'Folder name'),
+                      decoration: InputDecoration(
+                        hintText: S.of(context).dialogNewFolderHintFolderName,
+                      ),
                       controller: textEditingController,
                       validator: (value) {
                         if (value == null || value.isEmpty) {
-                          return 'Please enter a valid folder name';
+                          return S
+                              .of(context)
+                              .dialogNewFolderInvalidHintFolderName;
                         }
                         return null;
                       },
@@ -196,7 +201,7 @@ class _LibraryPageState extends State<LibraryPage> {
               ),
               actions: [
                 TextButton(
-                  child: const Text('Create'),
+                  child: Text(S.of(context).dialogNewFolderButtonCreate),
                   onPressed: () {
                     if (formKey.currentState?.validate() == true) {
                       Navigator.of(context).pop();

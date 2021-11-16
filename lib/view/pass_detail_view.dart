@@ -1,3 +1,4 @@
+import 'package:flupass/generated/l10n.dart';
 import 'package:flupass/model/pass_detail_model.dart';
 import 'package:flupass/page/page.dart';
 import 'package:flutter/material.dart';
@@ -26,8 +27,8 @@ class PassDetailView extends StatelessWidget {
       entries.add(ListTile(
         leading: const Icon(Icons.delete),
         onTap: () => context.read<PassDetailModel>().delete(),
-        title: const Text(
-          "Delete",
+        title: Text(
+          S.of(context).viewPassDetailButtonDelete,
           style: TextStyle(
             color: Colors.red,
             fontWeight: FontWeight.bold,
@@ -58,15 +59,18 @@ class PassDetailView extends StatelessWidget {
                     showDialog(
                       context: context,
                       builder: (_) => AlertDialog(
-                        title: const Text("Back to view mode"),
-                        content: const Text("Abort all changes?"),
+                        title: Text(S.of(context).dialogBackToViewModeTitle),
+                        content:
+                            Text(S.of(context).dialogBackToViewModeContent),
                         actions: [
                           FlatButton(
-                            child: const Text("Cancel"),
+                            child: Text(
+                                S.of(context).dialogBackToViewModeButtonCancel),
                             onPressed: () => Navigator.of(context).pop(),
                           ),
                           FlatButton(
-                            child: const Text("Abort"),
+                            child: Text(
+                                S.of(context).dialogBackToViewModeButtonAbort),
                             textColor: Colors.red,
                             onPressed: () {
                               Navigator.of(context).pop();
@@ -90,18 +94,23 @@ class PassDetailView extends StatelessWidget {
                         onPressed: () => context
                             .read<PassDetailModel>()
                             .setMode(DetailViewMode.modify),
-                        child: Text("Edit".toUpperCase())),
+                        child: Text(S
+                            .of(context)
+                            .pagePassDetailToolbarActionEditTitle)),
                 mode == DetailViewMode.readOnly
                     ? const SizedBox.shrink()
                     : TextButton(
                         onPressed: () => context.read<PassDetailModel>().save(),
-                        child: Text("Done".toUpperCase())),
+                        child: Text(S
+                            .of(context)
+                            .pagePassDetailToolbarActionDoneTitle)),
               ],
             ),
             body: extraInfos == null
                 ? const Center(child: CircularProgressIndicator())
                 : extraInfos.isEmpty
-                    ? const Center(child: Text("No result."))
+                    ? Center(
+                        child: Text(S.of(context).pagePassDetailNoExtraInfos))
                     : ListView(children: entries),
           );
   }
@@ -125,7 +134,9 @@ class PassDetailView extends StatelessWidget {
               return TextFormField(
                 initialValue: split.length == 2 ? split.last : line,
                 decoration: InputDecoration(
-                  labelText: split.length == 2 ? split.first : "No Label",
+                  labelText: split.length == 2
+                      ? split.first
+                      : S.current.pagePassDetailExtraInfoFieldNoLabel,
                 ),
                 readOnly: mode == DetailViewMode.readOnly,
                 onChanged: (value) => extraInfos[index] = value,
@@ -142,8 +153,8 @@ class PassDetailView extends StatelessWidget {
           children: [
             TextFormField(
               obscureText: obscurePassword,
-              decoration: const InputDecoration(
-                labelText: "Password",
+              decoration: InputDecoration(
+                labelText: S.of(context).pagePassDetailPasswordFieldLabel,
               ),
               readOnly: mode == DetailViewMode.readOnly,
               controller: context.select(

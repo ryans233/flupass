@@ -18,7 +18,10 @@ class PassStoreListModel with ChangeNotifier {
 
   List<FileSystemEntity> root = List.empty();
 
-  PassStoreListModel(this.appSettingsModel);
+  PassStoreListModel(this.appSettingsModel) {
+    _passStorePath = appSettingsModel.path;
+    updatePassStore();
+  }
 
   String details = "";
 
@@ -27,9 +30,9 @@ class PassStoreListModel with ChangeNotifier {
   onAppSettingsChanged() {
     var oldPath = _passStorePath;
     var newPath = appSettingsModel.path;
+    if (oldPath == newPath) return;
     debugPrint(
         "PassStoreListModel: onAppSettingsChanged old=$oldPath new=$newPath");
-    if (oldPath == newPath) return;
     _passStorePath = newPath;
     updatePassStore();
   }

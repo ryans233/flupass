@@ -1,3 +1,4 @@
+import 'package:flupass/generated/l10n.dart';
 import 'package:flupass/model/password_generator_model.dart';
 import 'package:flupass/view/colorized_password_view.dart';
 import 'package:flutter/material.dart';
@@ -17,7 +18,7 @@ class PasswordGeneratorPage extends StatelessWidget {
       create: (_) => PasswordGeneratorModel(),
       child: Scaffold(
         appBar: AppBar(
-          title: const Text('Password Generator'),
+          title: Text(S.of(context).pagePasswordGeneratorTitle),
           actions: [
             if (needResult)
               Builder(
@@ -44,8 +45,8 @@ class PasswordGeneratorPage extends StatelessWidget {
   Widget buildGenerateButton() => Builder(
         builder: (context) => ListTile(
           tileColor: Colors.white,
-          title: const Text(
-            'Generate',
+          title: Text(
+            S.of(context).pagePasswordGeneratorButtonGenerate,
             style: TextStyle(color: Colors.blue),
           ),
           onTap: () => context.read<PasswordGeneratorModel>().generate(),
@@ -55,8 +56,8 @@ class PasswordGeneratorPage extends StatelessWidget {
   Widget buildCopyButton() => Builder(
         builder: (context) => ListTile(
           tileColor: Colors.white,
-          title: const Text(
-            'Copy',
+          title: Text(
+            S.of(context).pagePasswordGeneratorButtonCopy,
             style: TextStyle(color: Colors.blue),
           ),
           onTap: () => context
@@ -64,15 +65,18 @@ class PasswordGeneratorPage extends StatelessWidget {
               .copy()
               .then(
                 (_) => ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(
-                    content: Text("Copied"),
+                  SnackBar(
+                    content:
+                        Text(S.of(context).pagePasswordGeneratorSnackMsgCopied),
                   ),
                 ),
               )
               .catchError(
                 (_) => ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(
-                    content: Text("Failed to copy"),
+                  SnackBar(
+                    content: Text(S
+                        .of(context)
+                        .pagePasswordGeneratorSnackMsgFailedToCopy),
                   ),
                 ),
               ),
@@ -95,7 +99,8 @@ class PasswordGeneratorPage extends StatelessWidget {
       Builder(
         builder: (context) {
           return ListTile(
-            title: const Text('Length'),
+            title:
+                Text(S.of(context).pagePasswordGeneratorOptionEntryLengthTitle),
             trailing: Row(
               mainAxisSize: MainAxisSize.min,
               children: [
@@ -123,7 +128,8 @@ class PasswordGeneratorPage extends StatelessWidget {
       ),
       Builder(
         builder: (context) => SwitchListTile(
-          title: const Text('A-Z'),
+          title: Text(
+              S.of(context).pagePasswordGeneratorOptionEntryUppercaseTitle),
           value: context
               .select((PasswordGeneratorModel model) => model.hasUppercase),
           onChanged: (value) =>
@@ -132,7 +138,8 @@ class PasswordGeneratorPage extends StatelessWidget {
       ),
       Builder(
         builder: (context) => SwitchListTile(
-          title: const Text('a-z'),
+          title: Text(
+              S.of(context).pagePasswordGeneratorOptionEntryLowercaseTitle),
           value: context
               .select((PasswordGeneratorModel model) => model.hasLowercase),
           onChanged: (value) =>
@@ -141,7 +148,8 @@ class PasswordGeneratorPage extends StatelessWidget {
       ),
       Builder(
         builder: (context) => SwitchListTile(
-          title: const Text('123'),
+          title:
+              Text(S.of(context).pagePasswordGeneratorOptionEntryNumberTitle),
           value:
               context.select((PasswordGeneratorModel model) => model.hasNumber),
           onChanged: (value) =>
@@ -150,7 +158,8 @@ class PasswordGeneratorPage extends StatelessWidget {
       ),
       Builder(
         builder: (context) => SwitchListTile(
-            title: const Text('!@#'),
+            title: Text(
+                S.of(context).pagePasswordGeneratorOptionEntrySymbolsTitle),
             value: context.select(
                 (PasswordGeneratorModel model) => model.hasSpecialSymbols),
             onChanged: (value) => context

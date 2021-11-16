@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:io';
 
 import 'package:path/path.dart';
@@ -15,7 +16,7 @@ class DbManager {
 
   static DbManager get instance => _instance;
 
-  static const int _databaseVersion = 1;
+  static const int _databaseVersion = 2;
   static const _databaseName = 'main_db';
 
   Future<String> getDatabasePath(String dbName) async {
@@ -43,6 +44,13 @@ class DbManager {
         await batch.commit();
       },
       onDowngrade: onDatabaseDowngradeDelete,
+      onUpgrade: (db, oldVersion, newVersion) async {
+        var batch = db.batch();
+        if (oldVersion == 1) {
+          updateTableAppSettingsV1toV2(batch);
+        }
+        await batch.commit();
+      },
     );
   }
 
@@ -51,10 +59,16 @@ class DbManager {
     batch.execute('''CREATE TABLE ${AppSettingsTable.tableName}
     (
       ${AppSettingsTable.columnKey} INTEGER PRIMARY KEY,
+      ${AppSettingsTable.columnAppLanguage} TEXT,
       ${AppSettingsTable.columnPath} TEXT,
       ${AppSettingsTable.columnPrivateKey} TEXT,
       ${AppSettingsTable.columnPublicKey} TEXT,
       ${AppSettingsTable.columnPassphrase} TEXT
     )''');
+  }
+
+  updateTableAppSettingsV1toV2(Batch batch) {
+    batch.execute(
+        'ALTER TABLE ${AppSettingsTable.tableName} ADD ${AppSettingsTable.columnAppLanguage} TEXT');
   }
 }

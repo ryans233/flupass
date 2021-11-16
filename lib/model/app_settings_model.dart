@@ -1,14 +1,18 @@
 import 'package:flupass/db/table/app_settings_table.dart';
+import 'package:flupass/generated/l10n.dart';
 import 'package:flupass/repo/local/preferences_repository.dart';
-import 'package:flutter/foundation.dart';
+import 'package:flutter/widgets.dart';
 
 class AppSettingsModel with ChangeNotifier {
-  AppSettingsModel() {
-    refreshAppSettings();
-  }
+  AppSettingsModel(this.settings);
 
   PreferencesRepository prefRepo = PreferencesRepository.instance;
-  AppSettingsTable settings = AppSettingsTable();
+  AppSettingsTable settings;
+
+  String get appLanguage => settings.appLanguage;
+
+  set appLanguage(String appLanguage) =>
+      setSettings(AppSettingsTable.columnAppLanguage, appLanguage);
 
   String get path => settings.path;
 
@@ -35,6 +39,12 @@ class AppSettingsModel with ChangeNotifier {
 
   refreshAppSettings() async {
     settings = await prefRepo.getSettings();
+    notifyListeners();
+  }
+
+  setAppLanguage(String newValue) {
+    S.load(Locale(newValue));
+    appLanguage = newValue;
     notifyListeners();
   }
 }
