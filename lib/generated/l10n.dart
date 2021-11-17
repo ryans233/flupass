@@ -450,11 +450,11 @@ class S {
     );
   }
 
-  /// `No result.`
-  String get pagePassDetailNoExtraInfos {
+  /// `Empty.`
+  String get pagePassDetailEmpty {
     return Intl.message(
-      'No result.',
-      name: 'pagePassDetailNoExtraInfos',
+      'Empty.',
+      name: 'pagePassDetailEmpty',
       desc: '',
       args: [],
     );
@@ -515,6 +515,36 @@ class S {
     return Intl.message(
       'Version',
       name: 'pageSettingsSettingEntryVersionTitle',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Value must not be null!`
+  String get pagePassDetailNewExtraInfoEntryValueError {
+    return Intl.message(
+      'Value must not be null!',
+      name: 'pagePassDetailNewExtraInfoEntryValueError',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Key`
+  String get pagePassDetailNewExtraInfoEntryHintKey {
+    return Intl.message(
+      'Key',
+      name: 'pagePassDetailNewExtraInfoEntryHintKey',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Value`
+  String get pagePassDetailNewExtraInfoEntryHintValue {
+    return Intl.message(
+      'Value',
+      name: 'pagePassDetailNewExtraInfoEntryHintValue',
       desc: '',
       args: [],
     );

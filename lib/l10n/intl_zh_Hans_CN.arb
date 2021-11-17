@@ -39,11 +39,14 @@
   "dialogBackToViewModeButtonAbort": "放弃",
   "pagePassDetailToolbarActionEditTitle": "编辑",
   "pagePassDetailToolbarActionDoneTitle": "完成",
-  "pagePassDetailNoExtraInfos": "无内容。",
+  "pagePassDetailEmpty": "无内容。",
   "pagePassDetailExtraInfoFieldNoLabel": "无标签",
   "pagePassDetailPasswordFieldLabel": "密码",
   "pageSettingsSettingEntryAppLanguageTitle": "语言",
   "pageSettingsSettingEntryAppLanguageValueEnglish": "英文",
   "pageSettingsSettingEntryAppLanguageValueSimplifiedChinese": "简体中文",
-  "pageSettingsSettingEntryVersionTitle": "版本"
+  "pageSettingsSettingEntryVersionTitle": "版本",
+  "pagePassDetailNewExtraInfoEntryValueError": "值不能为空！",
+  "pagePassDetailNewExtraInfoEntryHintKey": "键",
+  "pagePassDetailNewExtraInfoEntryHintValue": "值"
 }

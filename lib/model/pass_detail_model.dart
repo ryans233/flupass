@@ -1,3 +1,4 @@
+import 'dart:collection';
 import 'dart:convert';
 import 'dart:io';
 import 'dart:typed_data';
@@ -17,13 +18,18 @@ class PassDetailModel with ChangeNotifier {
 
   String publicKey = "";
 
-  List<String>? extraInfos;
+  List<String>? get extraInfos =>
+      List.unmodifiable(_extraInfos ?? List.empty());
+
+  List<String>? _extraInfos;
 
   DetailViewMode mode;
 
   bool obscurePassword = true;
 
   final TextEditingController passwordInputController = TextEditingController();
+  final TextEditingController newEntryKeyController = TextEditingController();
+  final TextEditingController newEntryValueController = TextEditingController();
 
   toggleObscurePassword() {
     obscurePassword = !obscurePassword;
@@ -44,6 +50,8 @@ class PassDetailModel with ChangeNotifier {
   @override
   dispose() {
     passwordInputController.dispose();
+    newEntryKeyController.dispose();
+    newEntryValueController.dispose();
     super.dispose();
   }
 
@@ -66,16 +74,16 @@ class PassDetailModel with ChangeNotifier {
     final file = File(path);
     if ((await file.length() == 0)) {
       setPassword("");
-      extraInfos = List.empty(growable: true);
+      _extraInfos = List.empty(growable: true);
       notifyListeners();
     } else {
       try {
         var readAsBytesSync = await file.readAsBytes();
         final result =
             await OpenPGP.decryptBytes(readAsBytesSync, privateKey, passphrase);
-        extraInfos = String.fromCharCodes(result).trimRight().split("\n");
-        passwordInputController.text = extraInfos?.first ?? "";
-        if (extraInfos?.first != null) extraInfos?.removeAt(0);
+        _extraInfos = String.fromCharCodes(result).trimRight().split("\n");
+        passwordInputController.text = _extraInfos?.first ?? "";
+        if (_extraInfos?.first != null) _extraInfos?.removeAt(0);
         notifyListeners();
       } catch (e, s) {
         debugPrint(e.toString());
@@ -86,9 +94,12 @@ class PassDetailModel with ChangeNotifier {
   clear() {
     setPassword("");
     selectedPassPath = null;
-    extraInfos = null;
+    _extraInfos = null;
     obscurePassword = true;
     mode = DetailViewMode.readOnly;
+    passwordInputController.clear();
+    newEntryKeyController.clear();
+    newEntryValueController.clear();
     notifyListeners();
   }
 
@@ -102,11 +113,11 @@ class PassDetailModel with ChangeNotifier {
 
   save() async {
     if (publicKey.isEmpty) return;
-    if (extraInfos == null) return;
+    if (_extraInfos == null) return;
     final path = selectedPassPath;
     if (path == null) return;
     try {
-      String extra = extraInfos?.fold<String>(
+      String extra = _extraInfos?.fold<String>(
               "", (previousValue, element) => previousValue + element + "\n") ??
           "";
       String output =
@@ -136,6 +147,24 @@ class PassDetailModel with ChangeNotifier {
 
   setPassword(String password) {
     passwordInputController.text = password;
+  }
+
+  addExtraInfo() {
+    _extraInfos?.add(
+        "${newEntryKeyController.text.toString()}: ${newEntryValueController.text.toString()}");
+    newEntryKeyController.clear();
+    newEntryValueController.clear();
+    notifyListeners();
+  }
+
+  updateExtraInfo(int index, String value) {
+    _extraInfos?[index] = value;
+    notifyListeners();
+  }
+
+  deleteExtraInfo(int index) {
+    _extraInfos?.removeAt(index);
+    notifyListeners();
   }
 }
 

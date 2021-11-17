@@ -58,10 +58,15 @@ class MessageLookup extends MessageLookupByLibrary {
         "pageLibraryDialActionNewPass":
             MessageLookupByLibrary.simpleMessage("新的密码"),
         "pageLibraryDialCreate": MessageLookupByLibrary.simpleMessage("创建"),
+        "pagePassDetailEmpty": MessageLookupByLibrary.simpleMessage("无内容。"),
         "pagePassDetailExtraInfoFieldNoLabel":
             MessageLookupByLibrary.simpleMessage("无标签"),
-        "pagePassDetailNoExtraInfos":
-            MessageLookupByLibrary.simpleMessage("无内容。"),
+        "pagePassDetailNewExtraInfoEntryHintKey":
+            MessageLookupByLibrary.simpleMessage("键"),
+        "pagePassDetailNewExtraInfoEntryHintValue":
+            MessageLookupByLibrary.simpleMessage("值"),
+        "pagePassDetailNewExtraInfoEntryValueError":
+            MessageLookupByLibrary.simpleMessage("值不能为空！"),
         "pagePassDetailPasswordFieldLabel":
             MessageLookupByLibrary.simpleMessage("密码"),
         "pagePassDetailToolbarActionDoneTitle":

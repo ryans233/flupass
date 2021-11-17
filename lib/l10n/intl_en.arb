@@ -39,11 +39,14 @@
   "dialogBackToViewModeButtonAbort": "Abort",
   "pagePassDetailToolbarActionEditTitle": "EDIT",
   "pagePassDetailToolbarActionDoneTitle": "Done",
-  "pagePassDetailNoExtraInfos": "No result.",
+  "pagePassDetailEmpty": "Empty.",
   "pagePassDetailExtraInfoFieldNoLabel": "No Label",
   "pagePassDetailPasswordFieldLabel": "Password",
   "pageSettingsSettingEntryAppLanguageTitle": "Language",
   "pageSettingsSettingEntryAppLanguageValueEnglish": "English",
   "pageSettingsSettingEntryAppLanguageValueSimplifiedChinese": "Simplified Chinese",
-  "pageSettingsSettingEntryVersionTitle": "Version"
+  "pageSettingsSettingEntryVersionTitle": "Version",
+  "pagePassDetailNewExtraInfoEntryValueError": "Value must not be null!",
+  "pagePassDetailNewExtraInfoEntryHintKey": "Key",
+  "pagePassDetailNewExtraInfoEntryHintValue": "Value"
 }

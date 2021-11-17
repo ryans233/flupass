@@ -62,10 +62,15 @@ class MessageLookup extends MessageLookupByLibrary {
         "pageLibraryDialActionNewPass":
             MessageLookupByLibrary.simpleMessage("New pass"),
         "pageLibraryDialCreate": MessageLookupByLibrary.simpleMessage("Create"),
+        "pagePassDetailEmpty": MessageLookupByLibrary.simpleMessage("Empty."),
         "pagePassDetailExtraInfoFieldNoLabel":
             MessageLookupByLibrary.simpleMessage("No Label"),
-        "pagePassDetailNoExtraInfos":
-            MessageLookupByLibrary.simpleMessage("No result."),
+        "pagePassDetailNewExtraInfoEntryHintKey":
+            MessageLookupByLibrary.simpleMessage("Key"),
+        "pagePassDetailNewExtraInfoEntryHintValue":
+            MessageLookupByLibrary.simpleMessage("Value"),
+        "pagePassDetailNewExtraInfoEntryValueError":
+            MessageLookupByLibrary.simpleMessage("Value must not be null!"),
         "pagePassDetailPasswordFieldLabel":
             MessageLookupByLibrary.simpleMessage("Password"),
         "pagePassDetailToolbarActionDoneTitle":
