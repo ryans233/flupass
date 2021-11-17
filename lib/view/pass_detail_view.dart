@@ -116,7 +116,32 @@ class PassDetailView extends StatelessWidget {
   Widget buildDeletePassButton() => Builder(
       builder: (context) => ListTile(
             tileColor: Colors.white,
-            onTap: () => context.read<PassDetailModel>().delete(),
+            onTap: () => showDialog(
+              context: context,
+              builder: (_) => AlertDialog(
+                title: Text(S.of(context).dialogDeletePassTitle),
+                content: Text(S.of(context).dialogDeletePassContent(basename(
+                    context.read<PassDetailModel>().selectedPassPath ?? ""))),
+                actions: [
+                  TextButton(
+                    child: Text(S.of(context).dialogButtonCancel),
+                    onPressed: () => Navigator.of(context).pop(),
+                  ),
+                  TextButton(
+                    child: Text(
+                      S.of(context).dialogButtonDelete,
+                      style: const TextStyle(
+                        color: Colors.red,
+                      ),
+                    ),
+                    onPressed: () {
+                      Navigator.of(context).pop();
+                      context.read<PassDetailModel>().delete();
+                    },
+                  ),
+                ],
+              ),
+            ),
             title: Text(
               S.of(context).viewPassDetailButtonDelete,
               style: const TextStyle(
