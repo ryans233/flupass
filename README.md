@@ -10,7 +10,7 @@ This program is written in Flutter and still WIP. Feel free to open up a PR or m
 - Pass file support
   - Create
   - Read
-  - Update (only password field and existed fields by far)
+  - Update
   - Delete
 - Folder support
 - OpenPGP file encryption / decryption
