@@ -118,8 +118,7 @@ class SettingsPage extends StatelessWidget {
                     )),
                     actions: [
                       TextButton(
-                        child:
-                            Text(S.of(context).dialogEnterPassphraseButtonOk),
+                        child: Text(S.of(context).dialogButtonOk),
                         onPressed: () {
                           context.read<AppSettingsModel>().passphrase =
                               controller.text;

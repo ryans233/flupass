@@ -20,26 +20,27 @@ typedef String MessageIfAbsent(String messageStr, List<dynamic> args);
 class MessageLookup extends MessageLookupByLibrary {
   String get localeName => 'en';
 
-  static String m0(path) => "Current path: ${path}";
+  static String m0(filename) => "Are you sure you want to delete ${filename}}?";
+
+  static String m1(path) => "Current path: ${path}";
 
   final messages = _notInlinedMessages(_notInlinedMessages);
   static Map<String, Function> _notInlinedMessages(_) => <String, Function>{
         "appName": MessageLookupByLibrary.simpleMessage("flupass"),
-        "dialogBackToViewModeButtonAbort":
-            MessageLookupByLibrary.simpleMessage("Abort"),
-        "dialogBackToViewModeButtonCancel":
-            MessageLookupByLibrary.simpleMessage("Cancel"),
         "dialogBackToViewModeContent":
             MessageLookupByLibrary.simpleMessage("Abort all changes?"),
         "dialogBackToViewModeTitle":
             MessageLookupByLibrary.simpleMessage("Back to view mode"),
-        "dialogEnterPassphraseButtonOk":
-            MessageLookupByLibrary.simpleMessage("OK"),
+        "dialogButtonAbort": MessageLookupByLibrary.simpleMessage("Abort"),
+        "dialogButtonCancel": MessageLookupByLibrary.simpleMessage("Cancel"),
+        "dialogButtonCreate": MessageLookupByLibrary.simpleMessage("Create"),
+        "dialogButtonDelete": MessageLookupByLibrary.simpleMessage("Delete"),
+        "dialogButtonOk": MessageLookupByLibrary.simpleMessage("OK"),
+        "dialogDeletePassContent": m0,
+        "dialogDeletePassTitle": MessageLookupByLibrary.simpleMessage("Delete"),
         "dialogEnterPassphraseTitle":
             MessageLookupByLibrary.simpleMessage("Enter your passphrase"),
-        "dialogNewFolderButtonCreate":
-            MessageLookupByLibrary.simpleMessage("Create"),
-        "dialogNewFolderCurrentPath": m0,
+        "dialogNewFolderCurrentPath": m1,
         "dialogNewFolderHintFolderName":
             MessageLookupByLibrary.simpleMessage("Folder name"),
         "dialogNewFolderInvalidHintFolderName":
@@ -47,8 +48,6 @@ class MessageLookup extends MessageLookupByLibrary {
                 "Please enter a valid folder name"),
         "dialogNewFolderTitle":
             MessageLookupByLibrary.simpleMessage("New folder"),
-        "dialogNewPassButtonCreate":
-            MessageLookupByLibrary.simpleMessage("Create"),
         "dialogNewPassHelperPassName": MessageLookupByLibrary.simpleMessage(
             "Filename would be end up with .gpg"),
         "dialogNewPassHintInvalidHintPassName":
@@ -62,10 +61,15 @@ class MessageLookup extends MessageLookupByLibrary {
         "pageLibraryDialActionNewPass":
             MessageLookupByLibrary.simpleMessage("New pass"),
         "pageLibraryDialCreate": MessageLookupByLibrary.simpleMessage("Create"),
+        "pagePassDetailEmpty": MessageLookupByLibrary.simpleMessage("Empty."),
         "pagePassDetailExtraInfoFieldNoLabel":
             MessageLookupByLibrary.simpleMessage("No Label"),
-        "pagePassDetailNoExtraInfos":
-            MessageLookupByLibrary.simpleMessage("No result."),
+        "pagePassDetailNewExtraInfoEntryHintKey":
+            MessageLookupByLibrary.simpleMessage("Key"),
+        "pagePassDetailNewExtraInfoEntryHintValue":
+            MessageLookupByLibrary.simpleMessage("Value"),
+        "pagePassDetailNewExtraInfoEntryValueError":
+            MessageLookupByLibrary.simpleMessage("Value must not be null!"),
         "pagePassDetailPasswordFieldLabel":
             MessageLookupByLibrary.simpleMessage("Password"),
         "pagePassDetailToolbarActionDoneTitle":
