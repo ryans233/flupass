@@ -154,7 +154,7 @@ class _LibraryPageState extends State<LibraryPage> {
               ),
               actions: [
                 TextButton(
-                  child: Text(S.of(context).dialogNewPassButtonCreate),
+                  child: Text(S.of(context).dialogButtonCreate),
                   onPressed: () {
                     if (formKey.currentState?.validate() == true) {
                       Navigator.of(context).pop();
@@ -201,7 +201,7 @@ class _LibraryPageState extends State<LibraryPage> {
               ),
               actions: [
                 TextButton(
-                  child: Text(S.of(context).dialogNewFolderButtonCreate),
+                  child: Text(S.of(context).dialogButtonCreate),
                   onPressed: () {
                     if (formKey.currentState?.validate() == true) {
                       Navigator.of(context).pop();

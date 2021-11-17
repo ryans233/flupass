@@ -90,6 +90,56 @@ class S {
     );
   }
 
+  /// `Cancel`
+  String get dialogButtonCancel {
+    return Intl.message(
+      'Cancel',
+      name: 'dialogButtonCancel',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Abort`
+  String get dialogButtonAbort {
+    return Intl.message(
+      'Abort',
+      name: 'dialogButtonAbort',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Create`
+  String get dialogButtonCreate {
+    return Intl.message(
+      'Create',
+      name: 'dialogButtonCreate',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Delete`
+  String get dialogButtonDelete {
+    return Intl.message(
+      'Delete',
+      name: 'dialogButtonDelete',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `OK`
+  String get dialogButtonOk {
+    return Intl.message(
+      'OK',
+      name: 'dialogButtonOk',
+      desc: '',
+      args: [],
+    );
+  }
+
   /// `New pass`
   String get dialogNewPassTitle {
     return Intl.message(
@@ -125,16 +175,6 @@ class S {
     return Intl.message(
       'Please enter a valid pass name',
       name: 'dialogNewPassHintInvalidHintPassName',
-      desc: '',
-      args: [],
-    );
-  }
-
-  /// `Create`
-  String get dialogNewPassButtonCreate {
-    return Intl.message(
-      'Create',
-      name: 'dialogNewPassButtonCreate',
       desc: '',
       args: [],
     );
@@ -177,16 +217,6 @@ class S {
       name: 'dialogNewFolderCurrentPath',
       desc: '',
       args: [path],
-    );
-  }
-
-  /// `Create`
-  String get dialogNewFolderButtonCreate {
-    return Intl.message(
-      'Create',
-      name: 'dialogNewFolderButtonCreate',
-      desc: '',
-      args: [],
     );
   }
 
@@ -370,16 +400,6 @@ class S {
     );
   }
 
-  /// `OK`
-  String get dialogEnterPassphraseButtonOk {
-    return Intl.message(
-      'OK',
-      name: 'dialogEnterPassphraseButtonOk',
-      desc: '',
-      args: [],
-    );
-  }
-
   /// `Delete`
   String get viewPassDetailButtonDelete {
     return Intl.message(
@@ -405,26 +425,6 @@ class S {
     return Intl.message(
       'Abort all changes?',
       name: 'dialogBackToViewModeContent',
-      desc: '',
-      args: [],
-    );
-  }
-
-  /// `Cancel`
-  String get dialogBackToViewModeButtonCancel {
-    return Intl.message(
-      'Cancel',
-      name: 'dialogBackToViewModeButtonCancel',
-      desc: '',
-      args: [],
-    );
-  }
-
-  /// `Abort`
-  String get dialogBackToViewModeButtonAbort {
-    return Intl.message(
-      'Abort',
-      name: 'dialogBackToViewModeButtonAbort',
       desc: '',
       args: [],
     );
@@ -547,6 +547,26 @@ class S {
       name: 'pagePassDetailNewExtraInfoEntryHintValue',
       desc: '',
       args: [],
+    );
+  }
+
+  /// `Delete`
+  String get dialogDeletePassTitle {
+    return Intl.message(
+      'Delete',
+      name: 'dialogDeletePassTitle',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Are you sure you want to delete {filename}}?`
+  String dialogDeletePassContent(Object filename) {
+    return Intl.message(
+      'Are you sure you want to delete $filename}?',
+      name: 'dialogDeletePassContent',
+      desc: '',
+      args: [filename],
     );
   }
 }

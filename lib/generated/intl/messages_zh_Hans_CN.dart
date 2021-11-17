@@ -20,32 +20,32 @@ typedef String MessageIfAbsent(String messageStr, List<dynamic> args);
 class MessageLookup extends MessageLookupByLibrary {
   String get localeName => 'zh_Hans_CN';
 
-  static String m0(path) => "当前路径：${path}";
+  static String m0(filename) => "确定要删除 ${filename} 吗？";
+
+  static String m1(path) => "当前路径：${path}";
 
   final messages = _notInlinedMessages(_notInlinedMessages);
   static Map<String, Function> _notInlinedMessages(_) => <String, Function>{
         "appName": MessageLookupByLibrary.simpleMessage("flupass"),
-        "dialogBackToViewModeButtonAbort":
-            MessageLookupByLibrary.simpleMessage("放弃"),
-        "dialogBackToViewModeButtonCancel":
-            MessageLookupByLibrary.simpleMessage("取消"),
         "dialogBackToViewModeContent":
             MessageLookupByLibrary.simpleMessage("放弃所有更改吗？"),
         "dialogBackToViewModeTitle":
             MessageLookupByLibrary.simpleMessage("返回查看模式"),
-        "dialogEnterPassphraseButtonOk":
-            MessageLookupByLibrary.simpleMessage("OK"),
+        "dialogButtonAbort": MessageLookupByLibrary.simpleMessage("中止"),
+        "dialogButtonCancel": MessageLookupByLibrary.simpleMessage("取消"),
+        "dialogButtonCreate": MessageLookupByLibrary.simpleMessage("创建"),
+        "dialogButtonDelete": MessageLookupByLibrary.simpleMessage("删除"),
+        "dialogButtonOk": MessageLookupByLibrary.simpleMessage("OK"),
+        "dialogDeletePassContent": m0,
+        "dialogDeletePassTitle": MessageLookupByLibrary.simpleMessage("删除"),
         "dialogEnterPassphraseTitle":
             MessageLookupByLibrary.simpleMessage("输入你的密码"),
-        "dialogNewFolderButtonCreate":
-            MessageLookupByLibrary.simpleMessage("创建"),
-        "dialogNewFolderCurrentPath": m0,
+        "dialogNewFolderCurrentPath": m1,
         "dialogNewFolderHintFolderName":
             MessageLookupByLibrary.simpleMessage("文件夹名称"),
         "dialogNewFolderInvalidHintFolderName":
             MessageLookupByLibrary.simpleMessage("请输入合法的文件夹名称"),
         "dialogNewFolderTitle": MessageLookupByLibrary.simpleMessage("新的文件夹"),
-        "dialogNewPassButtonCreate": MessageLookupByLibrary.simpleMessage("创建"),
         "dialogNewPassHelperPassName":
             MessageLookupByLibrary.simpleMessage("文件名将会以 .gpg 后缀名结尾"),
         "dialogNewPassHintInvalidHintPassName":

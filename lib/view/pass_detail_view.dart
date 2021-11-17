@@ -51,13 +51,12 @@ class PassDetailView extends StatelessWidget {
                             Text(S.of(context).dialogBackToViewModeContent),
                         actions: [
                           TextButton(
-                            child: Text(
-                                S.of(context).dialogBackToViewModeButtonCancel),
+                            child: Text(S.of(context).dialogButtonCancel),
                             onPressed: () => Navigator.of(context).pop(),
                           ),
                           TextButton(
                             child: Text(
-                              S.of(context).dialogBackToViewModeButtonAbort,
+                              S.of(context).dialogButtonAbort,
                               style: const TextStyle(
                                 color: Colors.red,
                               ),
