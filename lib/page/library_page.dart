@@ -207,7 +207,7 @@ class _LibraryPageState extends State<LibraryPage> {
                       Navigator.of(context).pop();
                       context
                           .read<PassStoreListModel>()
-                          .createPassFile(textEditingController.text);
+                          .createFolder(textEditingController.text);
                     }
                   },
                 ),
