@@ -97,7 +97,9 @@ class PassDetailView extends StatelessWidget {
             ),
             body: extraInfos == null
                 ? const Center(child: CircularProgressIndicator())
-                : password.isEmpty && extraInfos.isEmpty
+                : password.isEmpty &&
+                        extraInfos.isEmpty &&
+                        mode == DetailViewMode.readOnly
                     ? Center(child: Text(S.of(context).pagePassDetailEmpty))
                     : ListView(
                         children: [

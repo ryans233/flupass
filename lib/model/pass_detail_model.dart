@@ -169,7 +169,6 @@ class PassDetailModel with ChangeNotifier {
 }
 
 enum DetailViewMode {
-  create, // Create a new password.
   modify, // Modify an existing password.
   readOnly, // Read only mode.
 }
