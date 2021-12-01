@@ -55,6 +55,9 @@ class PassStoreListModel with ChangeNotifier {
 
   navigateToFolder(String path) {
     _relativePath = path.replaceFirst(_passStorePath, "");
+    if (_relativePath.endsWith(Platform.pathSeparator)) {
+      _relativePath = _relativePath.substring(0, _relativePath.length - 1);
+    }
     updatePassStore();
   }
 
