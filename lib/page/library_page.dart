@@ -8,6 +8,7 @@ import 'package:flupass/view/pass_detail_view.dart';
 import 'package:flupass/view/pass_list_view.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_speed_dial/flutter_speed_dial.dart';
+import 'package:path/path.dart';
 import 'package:provider/provider.dart';
 
 class LibraryPage extends StatefulWidget {
@@ -160,7 +161,28 @@ class _LibraryPageState extends State<LibraryPage> {
                       Navigator.of(context).pop();
                       context
                           .read<PassStoreListModel>()
-                          .createPassFile(textEditingController.text);
+                          .createPassFile(textEditingController.text)
+                          .then(
+                            (file) =>
+                                ScaffoldMessenger.of(context).showSnackBar(
+                              SnackBar(
+                                content: Text(S
+                                    .of(context)
+                                    .pageLibrarySnackMsgFilenameCreated(
+                                        basename(file.path))),
+                              ),
+                            ),
+                          )
+                          .catchError(
+                            (error) =>
+                                ScaffoldMessenger.of(context).showSnackBar(
+                              SnackBar(
+                                content: Text(S
+                                    .of(context)
+                                    .pageLibrarySnackMsgError(error)),
+                              ),
+                            ),
+                          );
                     }
                   },
                 ),

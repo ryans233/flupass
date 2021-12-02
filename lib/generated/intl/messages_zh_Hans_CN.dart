@@ -24,6 +24,10 @@ class MessageLookup extends MessageLookupByLibrary {
 
   static String m1(path) => "当前路径：${path}";
 
+  static String m2(error) => "错误：${error}";
+
+  static String m3(filename) => "${filename} 创建完成。";
+
   final messages = _notInlinedMessages(_notInlinedMessages);
   static Map<String, Function> _notInlinedMessages(_) => <String, Function>{
         "appName": MessageLookupByLibrary.simpleMessage("flupass"),
@@ -53,11 +57,15 @@ class MessageLookup extends MessageLookupByLibrary {
         "dialogNewPassHintPassName":
             MessageLookupByLibrary.simpleMessage("密码文件名"),
         "dialogNewPassTitle": MessageLookupByLibrary.simpleMessage("新的密码"),
+        "errorMessageYouShouldSettingUpPassStorePathFirst":
+            MessageLookupByLibrary.simpleMessage("请先设置密码库路径。"),
         "pageLibraryDialActionNewFolder":
             MessageLookupByLibrary.simpleMessage("新的文件夹"),
         "pageLibraryDialActionNewPass":
             MessageLookupByLibrary.simpleMessage("新的密码"),
         "pageLibraryDialCreate": MessageLookupByLibrary.simpleMessage("创建"),
+        "pageLibrarySnackMsgError": m2,
+        "pageLibrarySnackMsgFilenameCreated": m3,
         "pagePassDetailEmpty": MessageLookupByLibrary.simpleMessage("无内容。"),
         "pagePassDetailExtraInfoFieldNoLabel":
             MessageLookupByLibrary.simpleMessage("无标签"),

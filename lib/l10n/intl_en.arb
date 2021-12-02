@@ -50,5 +50,8 @@
   "pagePassDetailNewExtraInfoEntryHintKey": "Key",
   "pagePassDetailNewExtraInfoEntryHintValue": "Value",
   "dialogDeletePassTitle": "Delete",
-  "dialogDeletePassContent": "Are you sure you want to delete {filename}}?"
+  "dialogDeletePassContent": "Are you sure you want to delete {filename}}?",
+  "pageLibrarySnackMsgFilenameCreated": "{filename} created.",
+  "pageLibrarySnackMsgError": "Error: {error}",
+  "errorMessageYouShouldSettingUpPassStorePathFirst": "You should setting up pass store path first."
 }

@@ -569,6 +569,36 @@ class S {
       args: [filename],
     );
   }
+
+  /// `{filename} created.`
+  String pageLibrarySnackMsgFilenameCreated(Object filename) {
+    return Intl.message(
+      '$filename created.',
+      name: 'pageLibrarySnackMsgFilenameCreated',
+      desc: '',
+      args: [filename],
+    );
+  }
+
+  /// `Error: {error}`
+  String pageLibrarySnackMsgError(Object error) {
+    return Intl.message(
+      'Error: $error',
+      name: 'pageLibrarySnackMsgError',
+      desc: '',
+      args: [error],
+    );
+  }
+
+  /// `You should setting up pass store path first.`
+  String get errorMessageYouShouldSettingUpPassStorePathFirst {
+    return Intl.message(
+      'You should setting up pass store path first.',
+      name: 'errorMessageYouShouldSettingUpPassStorePathFirst',
+      desc: '',
+      args: [],
+    );
+  }
 }
 
 class AppLocalizationDelegate extends LocalizationsDelegate<S> {

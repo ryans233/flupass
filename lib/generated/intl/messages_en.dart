@@ -24,6 +24,10 @@ class MessageLookup extends MessageLookupByLibrary {
 
   static String m1(path) => "Current path: ${path}";
 
+  static String m2(error) => "Error: ${error}";
+
+  static String m3(filename) => "${filename} created.";
+
   final messages = _notInlinedMessages(_notInlinedMessages);
   static Map<String, Function> _notInlinedMessages(_) => <String, Function>{
         "appName": MessageLookupByLibrary.simpleMessage("flupass"),
@@ -56,11 +60,16 @@ class MessageLookup extends MessageLookupByLibrary {
         "dialogNewPassHintPassName":
             MessageLookupByLibrary.simpleMessage("Pass name"),
         "dialogNewPassTitle": MessageLookupByLibrary.simpleMessage("New pass"),
+        "errorMessageYouShouldSettingUpPassStorePathFirst":
+            MessageLookupByLibrary.simpleMessage(
+                "You should setting up pass store path first."),
         "pageLibraryDialActionNewFolder":
             MessageLookupByLibrary.simpleMessage("New folder"),
         "pageLibraryDialActionNewPass":
             MessageLookupByLibrary.simpleMessage("New pass"),
         "pageLibraryDialCreate": MessageLookupByLibrary.simpleMessage("Create"),
+        "pageLibrarySnackMsgError": m2,
+        "pageLibrarySnackMsgFilenameCreated": m3,
         "pagePassDetailEmpty": MessageLookupByLibrary.simpleMessage("Empty."),
         "pagePassDetailExtraInfoFieldNoLabel":
             MessageLookupByLibrary.simpleMessage("No Label"),

@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:io';
 
+import 'package:flupass/generated/l10n.dart';
 import 'package:flupass/model/app_settings_model.dart';
 import 'package:flutter/foundation.dart';
 import 'package:path/path.dart' as p;
@@ -79,20 +80,33 @@ class PassStoreListModel with ChangeNotifier {
     super.dispose();
   }
 
-  createPassFile(String text) {
-    debugPrint("PassStoreListModel: createPassFile $text");
-    File(_passStorePath +
-            _relativePath +
-            Platform.pathSeparator +
-            text +
-            "." +
-            extensionNameGpg)
-        .create(recursive: true);
+  Future<File> createPassFile(String filename) {
+    debugPrint("PassStoreListModel: createPassFile $filename");
+    if (_passStorePath.isEmpty) {
+      return Future.error(
+          S.current.errorMessageYouShouldSettingUpPassStorePathFirst);
+    } else {
+      return File(_passStorePath +
+              _relativePath +
+              Platform.pathSeparator +
+              filename +
+              "." +
+              extensionNameGpg)
+          .create(recursive: true);
+    }
   }
 
-  createFolder(String text) {
-    debugPrint("PassStoreListModel: createFolder $text");
-    Directory(_passStorePath + _relativePath + Platform.pathSeparator + text)
-        .create(recursive: true);
+  Future<Directory> createFolder(String filename) {
+    debugPrint("PassStoreListModel: createFolder $filename");
+    if (_passStorePath.isEmpty) {
+      return Future.error(
+          S.current.errorMessageYouShouldSettingUpPassStorePathFirst);
+    } else {
+      return Directory(_passStorePath +
+              _relativePath +
+              Platform.pathSeparator +
+              filename)
+          .create(recursive: true);
+    }
   }
 }
