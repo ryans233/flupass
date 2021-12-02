@@ -56,6 +56,14 @@ class PassStoreListModel with ChangeNotifier {
               (event is File &&
                   p.extension(event.path) == "." + extensionNameGpg));
     }).toList();
+    root.sort((a, b) {
+      if (a is Directory && b is Directory) {
+        return a.path.compareTo(b.path);
+      }
+      if (a is Directory) return -1;
+      if (b is Directory) return 1;
+      return a.path.compareTo(b.path);
+    });
     notifyListeners();
   }
 
