@@ -38,6 +38,11 @@ class PassStoreListModel with ChangeNotifier {
   }
 
   updatePassStore() async {
+    if (_passStorePath.isEmpty) {
+      root = List.empty();
+      notifyListeners();
+      return;
+    }
     var directory = Directory(_passStorePath + _relativePath);
     watcher?.cancel();
     watcher = directory.watch().listen((event) {
