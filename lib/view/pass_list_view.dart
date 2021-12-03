@@ -36,6 +36,14 @@ class _PassListViewState extends State<PassListView> {
       builder: (context) => Column(
         children: [
           AppBar(
+            leading: IconButton(
+              onPressed: () =>
+                  context.read<PassStoreListModel>().toggleSearchMode(),
+              icon: Icon(
+                  context.select((PassStoreListModel model) => model.searchMode)
+                      ? Icons.arrow_back
+                      : Icons.search),
+            ),
             actions: [
               IconButton(
                   onPressed: () => Navigator.of(context).push(MaterialPageRoute(
@@ -48,63 +56,60 @@ class _PassListViewState extends State<PassListView> {
                       Navigator.of(context).pushNamed(Routes.settings),
                   icon: const Icon(Icons.settings)),
             ],
-            title: shouldShowTitle
-                ? Text(S.of(context).appName)
-                : ScrollConfiguration(
-                    behavior: DragScrollBehavior(),
-                    child: BreadCrumb.builder(
-                      builder: (index) {
-                        final pathname = index == 0
-                            ? Platform.pathSeparator
-                            : relativePath.split(Platform.pathSeparator)[index];
-                        return BreadCrumbItem(
-                          content: Tooltip(
-                            message: pathname,
-                            textStyle: const TextStyle(
-                              color: Colors.white,
-                              fontSize: 14,
-                            ),
-                            child: Text(
-                              pathname,
-                              style: const TextStyle(
-                                color: Colors.white,
-                                fontSize: 18,
+            title: context
+                    .select((PassStoreListModel model) => model.searchMode)
+                ? buildSearchBar()
+                : shouldShowTitle
+                    ? Text(S.of(context).appName)
+                    : ScrollConfiguration(
+                        behavior: DragScrollBehavior(),
+                        child: BreadCrumb.builder(
+                          builder: (index) {
+                            final pathname = index == 0
+                                ? Platform.pathSeparator
+                                : relativePath
+                                    .split(Platform.pathSeparator)[index];
+                            return BreadCrumbItem(
+                              content: Tooltip(
+                                message: pathname,
+                                textStyle: const TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 14,
+                                ),
+                                child: Text(
+                                  pathname,
+                                  style: const TextStyle(
+                                    color: Colors.white,
+                                    fontSize: 18,
+                                  ),
+                                ),
                               ),
-                            ),
-                          ),
-                          onTap: () {
-                            final split =
-                                relativePath.split(Platform.pathSeparator);
-                            context.read<PassStoreListModel>().navigateToFolder(
-                                split.fold(
-                                    "",
-                                    (previousValue, element) =>
-                                        split.indexOf(element) <= index
-                                            ? previousValue +=
-                                                element + Platform.pathSeparator
-                                            : previousValue));
+                              onTap: () {
+                                final split =
+                                    relativePath.split(Platform.pathSeparator);
+                                context
+                                    .read<PassStoreListModel>()
+                                    .navigateToFolder(split.fold(
+                                        "",
+                                        (previousValue, element) =>
+                                            split.indexOf(element) <= index
+                                                ? previousValue += element +
+                                                    Platform.pathSeparator
+                                                : previousValue));
+                              },
+                            );
                           },
-                        );
-                      },
-                      itemCount:
-                          relativePath.split(Platform.pathSeparator).length,
-                      divider: const Icon(Icons.chevron_right),
-                      overflow: ScrollableOverflow(
-                        keepLastDivider: false,
-                        reverse: false,
-                        direction: Axis.horizontal,
-                        controller: scrollController,
+                          itemCount:
+                              relativePath.split(Platform.pathSeparator).length,
+                          divider: const Icon(Icons.chevron_right),
+                          overflow: ScrollableOverflow(
+                            keepLastDivider: false,
+                            reverse: false,
+                            direction: Axis.horizontal,
+                            controller: scrollController,
+                          ),
+                        ),
                       ),
-                    ),
-                  ),
-            leading: shouldShowTitle
-                ? const SizedBox.shrink()
-                : IconButton(
-                    onPressed: () => context
-                        .read<PassStoreListModel>()
-                        .navigateToParentFolder(),
-                    icon: const Icon(Icons.arrow_upward),
-                  ),
           ),
           Expanded(
             child: ListView.builder(
@@ -112,28 +117,28 @@ class _PassListViewState extends State<PassListView> {
               itemBuilder: (_, index) {
                 var entry = root[index];
                 return ListTile(
-                    leading: Icon((entry is Directory)
-                        ? Icons.folder
-                        : Icons.file_present),
-                    title: Text(basename(entry.path)),
-                    onTap: () {
-                      if (entry is File) {
-                        widget.onItemClick?.call(entry);
-                      } else if (entry is Directory) {
-                        context
-                            .read<PassStoreListModel>()
-                            .navigateToFolder(entry.path);
-                        if (scrollController.hasClients) {
-                          Future.delayed(const Duration(milliseconds: 50), () {
-                            scrollController.animateTo(
-                              scrollController.position.maxScrollExtent,
-                              curve: Curves.easeOut,
-                              duration: const Duration(milliseconds: 50),
-                            );
-                          });
-                        }
+                  leading: Icon(
+                      (entry is Directory) ? Icons.folder : Icons.file_present),
+                  title: Text(basename(entry.path)),
+                  onTap: () {
+                    if (entry is File) {
+                      widget.onItemClick?.call(entry);
+                    } else if (entry is Directory) {
+                      context
+                          .read<PassStoreListModel>()
+                          .navigateToFolder(entry.path);
+                      if (scrollController.hasClients) {
+                        Future.delayed(const Duration(milliseconds: 50), () {
+                          scrollController.animateTo(
+                            scrollController.position.maxScrollExtent,
+                            curve: Curves.easeOut,
+                            duration: const Duration(milliseconds: 50),
+                          );
+                        });
                       }
-                    });
+                    }
+                  },
+                );
               },
             ),
           ),
@@ -141,4 +146,27 @@ class _PassListViewState extends State<PassListView> {
       ),
     );
   }
+
+  Widget buildSearchBar() => Builder(
+        builder: (context) => Container(
+          decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.circular(4),
+          ),
+          padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 1),
+          child: TextField(
+            maxLines: 1,
+            style: const TextStyle(
+              fontSize: 15,
+            ),
+            decoration: InputDecoration(
+              suffixIcon: const Icon(Icons.search),
+              hintText: S.of(context).viewPassListSearchBarHintText,
+              border: InputBorder.none,
+            ),
+            onChanged: (value) =>
+                context.read<PassStoreListModel>().search(value),
+          ),
+        ),
+      );
 }

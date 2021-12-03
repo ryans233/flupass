@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:io';
 
+import 'package:async/async.dart';
 import 'package:flupass/generated/l10n.dart';
 import 'package:flupass/model/app_settings_model.dart';
 import 'package:flutter/foundation.dart';
@@ -29,12 +30,17 @@ class PassStoreListModel with ChangeNotifier {
   StreamSubscription<FileSystemEvent>? watcher;
 
   onAppSettingsChanged() {
-    var oldPath = _passStorePath;
-    var newPath = appSettingsModel.path;
+    final oldPath = _passStorePath;
+    final newPath = appSettingsModel.path;
     if (oldPath == newPath) return;
     debugPrint(
         "PassStoreListModel: onAppSettingsChanged old=$oldPath new=$newPath");
     _passStorePath = newPath;
+    //Recursive watching is not supported on Linux. Need a workaround.
+    watcher?.cancel();
+    watcher = Directory(_passStorePath).watch(recursive: true).listen((event) {
+      if (!searchMode) updatePassStore();
+    });
     updatePassStore();
   }
 
@@ -44,19 +50,19 @@ class PassStoreListModel with ChangeNotifier {
       notifyListeners();
       return;
     }
-    var directory = Directory(_passStorePath + _relativePath);
-    watcher?.cancel();
-    watcher = directory.watch().listen((event) {
-      updatePassStore();
-    });
-    root = await directory.list(recursive: false).where((event) {
+    root = await listPassStore(_passStorePath + _relativePath);
+    notifyListeners();
+  }
+
+  Future<List<FileSystemEntity>> listPassStore(String path) async {
+    final result = await Directory(path).list(recursive: false).where((event) {
       final basename = p.basename(event.path);
       return !basename.startsWith(".") &&
           (event is Directory ||
               (event is File &&
                   p.extension(event.path) == "." + extensionNameGpg));
     }).toList();
-    root.sort((a, b) {
+    result.sort((a, b) {
       if (a is Directory && b is Directory) {
         return a.path.compareTo(b.path);
       }
@@ -64,7 +70,7 @@ class PassStoreListModel with ChangeNotifier {
       if (b is Directory) return 1;
       return a.path.compareTo(b.path);
     });
-    notifyListeners();
+    return result;
   }
 
   navigateToFolder(String path) {
@@ -116,5 +122,31 @@ class PassStoreListModel with ChangeNotifier {
               filename)
           .create(recursive: true);
     }
+  }
+
+  bool _searchMode = false;
+  bool get searchMode => _searchMode;
+
+  toggleSearchMode() {
+    _searchMode = !_searchMode;
+    notifyListeners();
+    if (_searchMode == false) updatePassStore();
+  }
+
+  Timer? _timerSearchTask;
+
+  search(String value) async {
+    root = List.empty();
+    notifyListeners();
+    _timerSearchTask?.cancel();
+    _timerSearchTask = Timer(const Duration(milliseconds: 500), () async {
+      root = (await listPassStore(_passStorePath + _relativePath))
+          .where((element) => p
+              .basename(element.path)
+              .toLowerCase()
+              .contains(value.toLowerCase()))
+          .toList();
+      notifyListeners();
+    });
   }
 }

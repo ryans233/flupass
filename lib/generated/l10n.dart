@@ -599,6 +599,16 @@ class S {
       args: [],
     );
   }
+
+  /// `Type to Search`
+  String get viewPassListSearchBarHintText {
+    return Intl.message(
+      'Type to Search',
+      name: 'viewPassListSearchBarHintText',
+      desc: '',
+      args: [],
+    );
+  }
 }
 
 class AppLocalizationDelegate extends LocalizationsDelegate<S> {
