@@ -14,6 +14,8 @@ class PassStoreListModel with ChangeNotifier {
 
   String _passStorePath = "";
 
+  String get passStorePath => _passStorePath;
+
   String _relativePath = Platform.pathSeparator;
 
   String get relativePath => _relativePath;
@@ -54,8 +56,10 @@ class PassStoreListModel with ChangeNotifier {
     notifyListeners();
   }
 
-  Future<List<FileSystemEntity>> listPassStore(String path) async {
-    final result = await Directory(path).list(recursive: false).where((event) {
+  Future<List<FileSystemEntity>> listPassStore(String path,
+      {bool recursive = false}) async {
+    final result =
+        await Directory(path).list(recursive: recursive).where((event) {
       final basename = p.basename(event.path);
       return !basename.startsWith(".") &&
           (event is Directory ||
@@ -140,12 +144,13 @@ class PassStoreListModel with ChangeNotifier {
     notifyListeners();
     _timerSearchTask?.cancel();
     _timerSearchTask = Timer(const Duration(milliseconds: 500), () async {
-      root = (await listPassStore(_passStorePath + _relativePath))
-          .where((element) => p
-              .basename(element.path)
-              .toLowerCase()
-              .contains(value.toLowerCase()))
-          .toList();
+      root =
+          (await listPassStore(_passStorePath + _relativePath, recursive: true))
+              .where((element) => p
+                  .basename(element.path)
+                  .toLowerCase()
+                  .contains(value.toLowerCase()))
+              .toList();
       notifyListeners();
     });
   }
