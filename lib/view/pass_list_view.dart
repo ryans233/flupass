@@ -120,6 +120,16 @@ class _PassListViewState extends State<PassListView> {
                   leading: Icon(
                       (entry is Directory) ? Icons.folder : Icons.file_present),
                   title: Text(basename(entry.path)),
+                  subtitle: context.read<PassStoreListModel>().searchMode
+                      ? Text(
+                          entry.parent.path.replaceFirst(
+                            context.read<PassStoreListModel>().passStorePath +
+                                Platform.pathSeparator,
+                            Platform.pathSeparator,
+                          ),
+                          softWrap: false,
+                        )
+                      : null,
                   onTap: () {
                     if (entry is File) {
                       widget.onItemClick?.call(entry);
