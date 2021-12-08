@@ -1,8 +1,7 @@
 import 'package:flupass/generated/l10n.dart';
 import 'package:flupass/model/pass_detail_model.dart';
-import 'package:flupass/page/page.dart';
+import 'package:flupass/view/pass_field_builder.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:path/path.dart';
 import 'package:provider/provider.dart';
 
@@ -15,14 +14,7 @@ class PassDetailView extends StatelessWidget {
   Widget build(BuildContext context) {
     final path =
         context.select((PassDetailModel model) => model.selectedPassPath);
-    final extraInfos =
-        context.select((PassDetailModel model) => model.extraInfos);
     final mode = context.select((PassDetailModel model) => model.mode);
-    final obscureText =
-        context.select((PassDetailModel model) => model.obscurePassword);
-    final password = context
-        .select((PassDetailModel model) => model.passwordInputController.text);
-
     return path == null
         ? const Scaffold()
         : Scaffold(
@@ -95,23 +87,24 @@ class PassDetailView extends StatelessWidget {
                             .pagePassDetailToolbarActionDoneTitle)),
               ],
             ),
-            body: extraInfos == null
-                ? const Center(child: CircularProgressIndicator())
-                : password.isEmpty &&
-                        extraInfos.isEmpty &&
-                        mode == DetailViewMode.readOnly
-                    ? Center(child: Text(S.of(context).pagePassDetailEmpty))
-                    : ListView(
-                        children: [
-                          ...transformToWidgets(
-                              mode, obscureText, password, extraInfos),
-                          if (mode == DetailViewMode.modify) ...[
-                            buildAddExtraInfoEntryButton(),
-                            const Divider(),
-                            buildDeletePassButton(),
-                          ]
-                        ],
-                      ),
+            body: Selector<PassDetailModel, List<String>>(
+              selector: (context, model) => model.passContent,
+              builder: (_, value, ___) =>
+                  value.isEmpty && mode == DetailViewMode.readOnly
+                      ? Center(child: Text(S.of(context).pagePassDetailEmpty))
+                      : ListView(
+                          children: [
+                            ...value.asMap().entries.map((e) =>
+                                PassFieldBuilder()
+                                    .buildFromLine(e.key, e.value, mode)),
+                            if (mode == DetailViewMode.modify) ...[
+                              buildAddExtraInfoEntryButton(),
+                              const Divider(),
+                              buildDeletePassButton(),
+                            ]
+                          ],
+                        ),
+            ),
           );
   }
 
@@ -199,133 +192,4 @@ class PassDetailView extends StatelessWidget {
           ),
         );
       });
-
-  List<Widget> transformToWidgets(
-          mode, obscurePassword, password, List<String>? extraInfos) =>
-      List.empty(growable: true)
-        ..add(buildPasswordField(password, obscurePassword, mode))
-        ..addAll(buildExtraInfoFields(extraInfos, mode));
-
-  List<Widget> buildExtraInfoFields(
-    List<String>? extraInfos,
-    DetailViewMode mode,
-  ) =>
-      extraInfos == null
-          ? List.empty()
-          : extraInfos
-              .map((line) => Builder(builder: (context) {
-                    final index = extraInfos.indexOf(line);
-                    final split = line.split(': ');
-                    return ListTile(
-                      leading: mode == DetailViewMode.readOnly
-                          ? null
-                          : IconButton(
-                              icon: const Icon(Icons.remove_circle_outline),
-                              onPressed: () => context
-                                  .read<PassDetailModel>()
-                                  .deleteExtraInfo(index),
-                            ),
-                      title: mode == DetailViewMode.readOnly
-                          ? TextFormField(
-                              initialValue:
-                                  split.length == 2 ? split.last : line,
-                              decoration: InputDecoration(
-                                labelText: split.length == 2 &&
-                                        split.first.isNotEmpty
-                                    ? split.first
-                                    : S.current
-                                        .pagePassDetailExtraInfoFieldNoLabel,
-                              ),
-                              readOnly: mode == DetailViewMode.readOnly,
-                              onChanged: (value) => context
-                                  .read<PassDetailModel>()
-                                  .updateExtraInfo(
-                                      index, "${split.first}: $value"),
-                            )
-                          : Column(
-                              children: [
-                                TextFormField(
-                                  initialValue:
-                                      split.length == 2 ? split.first : "",
-                                  decoration: InputDecoration(
-                                    labelText: S
-                                        .of(context)
-                                        .pagePassDetailNewExtraInfoEntryHintKey,
-                                    border: InputBorder.none,
-                                  ),
-                                  readOnly: mode == DetailViewMode.readOnly,
-                                  onChanged: (value) => context
-                                      .read<PassDetailModel>()
-                                      .updateExtraInfo(
-                                          index, "$value: ${split.last}"),
-                                ),
-                                TextFormField(
-                                  initialValue:
-                                      split.length == 2 ? split.last : line,
-                                  decoration: InputDecoration(
-                                    labelText: S
-                                        .of(context)
-                                        .pagePassDetailNewExtraInfoEntryHintValue,
-                                  ),
-                                  readOnly: mode == DetailViewMode.readOnly,
-                                  onChanged: (value) => context
-                                      .read<PassDetailModel>()
-                                      .updateExtraInfo(
-                                          index, "${split.first}: $value"),
-                                ),
-                              ],
-                            ),
-                    );
-                  }))
-              .toList();
-
-  Widget buildPasswordField(
-    String? password,
-    bool obscurePassword,
-    DetailViewMode mode,
-  ) =>
-      Builder(
-        builder: (context) => ListTile(
-          title: TextFormField(
-            obscureText: obscurePassword,
-            decoration: InputDecoration(
-              labelText: S.of(context).pagePassDetailPasswordFieldLabel,
-            ),
-            readOnly: mode == DetailViewMode.readOnly,
-            controller: context.select(
-                (PassDetailModel model) => model.passwordInputController),
-          ),
-          trailing: Row(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              mode == DetailViewMode.readOnly
-                  ? const SizedBox.shrink()
-                  : IconButton(
-                      icon: const Icon(Icons.autorenew),
-                      onPressed: () => Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (context) =>
-                                    const PasswordGeneratorPage(
-                                        needResult: true),
-                              ))
-                          .then((value) => context
-                              .read<PassDetailModel>()
-                              .setPassword(value.toString())),
-                    ),
-              IconButton(
-                icon: const Icon(Icons.copy),
-                onPressed: () =>
-                    Clipboard.setData(ClipboardData(text: password)),
-              ),
-              IconButton(
-                icon: Icon(
-                    obscurePassword ? Icons.visibility : Icons.visibility_off),
-                onPressed: () =>
-                    context.read<PassDetailModel>().toggleObscurePassword(),
-              ),
-            ],
-          ),
-        ),
-      );
 }

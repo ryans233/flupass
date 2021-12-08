@@ -1,4 +1,3 @@
-import 'dart:collection';
 import 'dart:convert';
 import 'dart:io';
 import 'dart:typed_data';
@@ -18,21 +17,16 @@ class PassDetailModel with ChangeNotifier {
 
   String publicKey = "";
 
-  List<String>? get extraInfos =>
-      List.unmodifiable(_extraInfos ?? List.empty());
+  List<String> get passContent => List.unmodifiable(_passContent);
 
-  List<String>? _extraInfos;
+  List<String> _passContent = List.empty();
 
   DetailViewMode mode;
 
-  bool obscurePassword = true;
-
-  final TextEditingController passwordInputController = TextEditingController();
   final TextEditingController newEntryKeyController = TextEditingController();
   final TextEditingController newEntryValueController = TextEditingController();
 
   toggleObscurePassword() {
-    obscurePassword = !obscurePassword;
     notifyListeners();
   }
 
@@ -49,7 +43,6 @@ class PassDetailModel with ChangeNotifier {
 
   @override
   dispose() {
-    passwordInputController.dispose();
     newEntryKeyController.dispose();
     newEntryValueController.dispose();
     super.dispose();
@@ -73,17 +66,14 @@ class PassDetailModel with ChangeNotifier {
     if (path.isEmpty) return;
     final file = File(path);
     if ((await file.length() == 0)) {
-      setPassword("");
-      _extraInfos = List.empty(growable: true);
+      _passContent = List.empty(growable: true);
       notifyListeners();
     } else {
       try {
         var readAsBytesSync = await file.readAsBytes();
         final result =
             await OpenPGP.decryptBytes(readAsBytesSync, privateKey, passphrase);
-        _extraInfos = String.fromCharCodes(result).trimRight().split("\n");
-        passwordInputController.text = _extraInfos?.first ?? "";
-        if (_extraInfos?.first != null) _extraInfos?.removeAt(0);
+        _passContent = String.fromCharCodes(result).trimRight().split("\n");
         notifyListeners();
       } catch (e, s) {
         debugPrint(e.toString());
@@ -92,12 +82,9 @@ class PassDetailModel with ChangeNotifier {
   }
 
   clear() {
-    setPassword("");
     selectedPassPath = null;
-    _extraInfos = null;
-    obscurePassword = true;
+    _passContent = List.empty();
     mode = DetailViewMode.readOnly;
-    passwordInputController.clear();
     newEntryKeyController.clear();
     newEntryValueController.clear();
     notifyListeners();
@@ -113,16 +100,12 @@ class PassDetailModel with ChangeNotifier {
 
   save() async {
     if (publicKey.isEmpty) return;
-    if (_extraInfos == null) return;
     final path = selectedPassPath;
     if (path == null) return;
     try {
-      String extra = _extraInfos?.fold<String>(
-              "", (previousValue, element) => previousValue + element + "\n") ??
-          "";
-      String output =
-          passwordInputController.text.toString().trim() + "\n" + extra;
-      var encrypted = await OpenPGP.encryptBytes(
+      String output = passContent.fold<String>(
+          "", (previousValue, element) => previousValue + element + "\n");
+      final encrypted = await OpenPGP.encryptBytes(
           Uint8List.fromList(utf8.encode(output)), publicKey);
       File passFile = File(path);
       await passFile.writeAsBytes(encrypted);
@@ -145,25 +128,25 @@ class PassDetailModel with ChangeNotifier {
     }
   }
 
-  setPassword(String password) {
-    passwordInputController.text = password;
-  }
-
   addExtraInfo() {
-    _extraInfos?.add(
+    List<String> tmp = List.from(_passContent);
+    tmp.add(
         "${newEntryKeyController.text.toString()}: ${newEntryValueController.text.toString()}");
+    _passContent = tmp;
+    notifyListeners();
     newEntryKeyController.clear();
     newEntryValueController.clear();
-    notifyListeners();
   }
 
-  updateExtraInfo(int index, String value) {
-    _extraInfos?[index] = value;
-    notifyListeners();
-  }
-
-  deleteExtraInfo(int index) {
-    _extraInfos?.removeAt(index);
+  updatePass(int index, String? value) {
+    if ((passContent.length) <= index) return;
+    List<String> tmp = List.from(_passContent);
+    if (value == null) {
+      tmp.removeAt(index);
+    } else {
+      tmp[index] = value;
+    }
+    _passContent = tmp;
     notifyListeners();
   }
 }
