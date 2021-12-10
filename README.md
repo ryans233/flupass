@@ -4,6 +4,8 @@
 
 A cross-platform open source password manager inspired by pass, the standard UNIX password manager.
 
+![screenshot-main](https://user-images.githubusercontent.com/2986572/145554184-3a5922ae-9d78-4cff-a23f-ca72d794e904.png)
+
 This program is written in Flutter and still WIP. Feel free to open up a PR or make a feature request!
 
 ## Feature
