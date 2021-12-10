@@ -53,5 +53,6 @@
   "dialogDeletePassContent": "确定要删除 {filename} 吗？",
   "pageLibrarySnackMsgFilenameCreated": "{filename} 创建完成。",
   "pageLibrarySnackMsgError": "错误：{error}",
-  "errorMessageYouShouldSettingUpPassStorePathFirst": "请先设置密码库路径。"
+  "errorMessageYouShouldSettingUpPassStorePathFirst": "请先设置密码库路径。",
+  "pagePassDetailOtpFieldLabel": "OTP"
 }

@@ -75,6 +75,8 @@ class MessageLookup extends MessageLookupByLibrary {
             MessageLookupByLibrary.simpleMessage("值"),
         "pagePassDetailNewExtraInfoEntryValueError":
             MessageLookupByLibrary.simpleMessage("值不能为空！"),
+        "pagePassDetailOtpFieldLabel":
+            MessageLookupByLibrary.simpleMessage("OTP"),
         "pagePassDetailPasswordFieldLabel":
             MessageLookupByLibrary.simpleMessage("密码"),
         "pagePassDetailToolbarActionDoneTitle":

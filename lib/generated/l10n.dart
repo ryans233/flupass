@@ -599,6 +599,16 @@ class S {
       args: [],
     );
   }
+
+  /// `OTP`
+  String get pagePassDetailOtpFieldLabel {
+    return Intl.message(
+      'OTP',
+      name: 'pagePassDetailOtpFieldLabel',
+      desc: '',
+      args: [],
+    );
+  }
 }
 
 class AppLocalizationDelegate extends LocalizationsDelegate<S> {
