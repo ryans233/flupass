@@ -54,5 +54,6 @@
   "pageLibrarySnackMsgFilenameCreated": "{filename} 创建完成。",
   "pageLibrarySnackMsgError": "错误：{error}",
   "errorMessageYouShouldSettingUpPassStorePathFirst": "请先设置密码库路径。",
-  "pagePassDetailOtpFieldLabel": "OTP"
+  "pagePassDetailOtpFieldLabel": "OTP",
+  "pagePassDetailRawEditorHint": "在此输入文件内容..."
 }

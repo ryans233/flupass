@@ -79,6 +79,8 @@ class MessageLookup extends MessageLookupByLibrary {
             MessageLookupByLibrary.simpleMessage("OTP"),
         "pagePassDetailPasswordFieldLabel":
             MessageLookupByLibrary.simpleMessage("密码"),
+        "pagePassDetailRawEditorHint":
+            MessageLookupByLibrary.simpleMessage("在此输入文件内容..."),
         "pagePassDetailToolbarActionDoneTitle":
             MessageLookupByLibrary.simpleMessage("完成"),
         "pagePassDetailToolbarActionEditTitle":

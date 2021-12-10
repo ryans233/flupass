@@ -44,8 +44,9 @@ class _PasswordFieldWidgetState extends State<PasswordFieldWidget> {
             labelText: S.of(context).pagePassDetailPasswordFieldLabel,
           ),
           readOnly: widget.mode == DetailViewMode.readOnly,
-          onChanged: (value) =>
-              context.read<PassDetailModel>().updatePass(widget.index, value),
+          onChanged: (value) => context
+              .read<PassDetailModel>()
+              .updatePassByLine(widget.index, value),
           initialValue: widget.line,
         ),
         trailing: Row(
@@ -63,7 +64,7 @@ class _PasswordFieldWidgetState extends State<PasswordFieldWidget> {
                             ))
                         .then((value) => context
                             .read<PassDetailModel>()
-                            .updatePass(widget.index, value)),
+                            .updatePassByLine(widget.index, value)),
                   ),
             IconButton(
               icon: const Icon(Icons.copy),

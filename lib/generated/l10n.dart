@@ -609,6 +609,16 @@ class S {
       args: [],
     );
   }
+
+  /// `Input your pass content here...`
+  String get pagePassDetailRawEditorHint {
+    return Intl.message(
+      'Input your pass content here...',
+      name: 'pagePassDetailRawEditorHint',
+      desc: '',
+      args: [],
+    );
+  }
 }
 
 class AppLocalizationDelegate extends LocalizationsDelegate<S> {

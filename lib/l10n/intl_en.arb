@@ -54,5 +54,6 @@
   "pageLibrarySnackMsgFilenameCreated": "{filename} created.",
   "pageLibrarySnackMsgError": "Error: {error}",
   "errorMessageYouShouldSettingUpPassStorePathFirst": "You should setting up pass store path first.",
-  "pagePassDetailOtpFieldLabel": "OTP"
+  "pagePassDetailOtpFieldLabel": "OTP",
+  "pagePassDetailRawEditorHint": "Input your pass content here..."
 }
