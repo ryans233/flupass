@@ -1,6 +1,7 @@
 import 'package:flupass/model/pass_detail_model.dart';
 import 'package:flupass/view/parsers/basic_field_parser.dart';
 import 'package:flupass/view/parsers/field_parser.dart';
+import 'package:flupass/view/parsers/otp_field_parser.dart';
 import 'package:flupass/view/parsers/password_field_parser.dart';
 import 'package:flutter/widgets.dart';
 
@@ -20,7 +21,7 @@ class PassFieldBuilder {
 
   static final _basicFieldParser = BasicFieldParser();
   static final _passwordFieldParser = PasswordFieldParser();
-  static final _extraParsers = [];
+  static final _extraParsers = [OtpFieldParser()];
   static final _map = <String, FieldParser>{};
   static const fieldSeparator = ':';
 
