@@ -600,6 +600,16 @@ class S {
     );
   }
 
+  /// `Type to Search`
+  String get viewPassListSearchBarHintText {
+    return Intl.message(
+      'Type to Search',
+      name: 'viewPassListSearchBarHintText',
+      desc: '',
+      args: [],
+    );
+  }
+
   /// `OTP`
   String get pagePassDetailOtpFieldLabel {
     return Intl.message(

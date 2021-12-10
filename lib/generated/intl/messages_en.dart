@@ -131,6 +131,8 @@ class MessageLookup extends MessageLookupByLibrary {
             MessageLookupByLibrary.simpleMessage("Version"),
         "pageSettingsTitle": MessageLookupByLibrary.simpleMessage("Settings"),
         "viewPassDetailButtonDelete":
-            MessageLookupByLibrary.simpleMessage("Delete")
+            MessageLookupByLibrary.simpleMessage("Delete"),
+        "viewPassListSearchBarHintText":
+            MessageLookupByLibrary.simpleMessage("Type to Search")
       };
 }
