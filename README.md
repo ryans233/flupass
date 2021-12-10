@@ -16,15 +16,16 @@ This program is written in Flutter and still WIP. Feel free to open up a PR or m
 - OpenPGP file encryption / decryption
 - Password Generator
 - 2 Columns UI in landscape mode
+- Filename search
+- Custom field parser ([pass-otp](https://github.com/tadfisher/pass-otp), etc.)
 - i18n
 
 ## To-do
 
 - [ ] First time setup wizard
-- [ ] Search (basic file name search support & enhanced indexing search)
+- [ ] Enhanced indexing search
 - [ ] Import & Export
 - [ ] Synchronization
-- [ ] TOTP integration
 - [ ] Dark mode
 - [ ] Mobile support (scoped storage, Auto-fill, biometrics option, etc.)
 - [ ] Better desktop browser experience (dedicated browser extension or integrate with browserpass)
