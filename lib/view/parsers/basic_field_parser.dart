@@ -42,7 +42,7 @@ class _BasicFieldWidgetState extends State<BasicFieldWidget> {
                 icon: const Icon(Icons.remove_circle_outline),
                 onPressed: () => context
                     .read<PassDetailModel>()
-                    .updatePass(widget.index, null),
+                    .updatePassByLine(widget.index, null),
               ),
         title: widget.mode == DetailViewMode.readOnly
             ? TextFormField(
@@ -66,7 +66,8 @@ class _BasicFieldWidgetState extends State<BasicFieldWidget> {
                     readOnly: widget.mode == DetailViewMode.readOnly,
                     onChanged: (value) => context
                         .read<PassDetailModel>()
-                        .updatePass(widget.index, "$value: ${split.last}"),
+                        .updatePassByLine(
+                            widget.index, "$value: ${split.last}"),
                   ),
                   TextFormField(
                     initialValue: split.length == 2 ? split.last : widget.line,
@@ -78,7 +79,8 @@ class _BasicFieldWidgetState extends State<BasicFieldWidget> {
                     readOnly: widget.mode == DetailViewMode.readOnly,
                     onChanged: (value) => context
                         .read<PassDetailModel>()
-                        .updatePass(widget.index, "${split.first}: $value"),
+                        .updatePassByLine(
+                            widget.index, "${split.first}: $value"),
                   ),
                 ],
               ),

@@ -15,6 +15,8 @@ class PassDetailView extends StatelessWidget {
     final path =
         context.select((PassDetailModel model) => model.selectedPassPath);
     final mode = context.select((PassDetailModel model) => model.mode);
+    final isWysiwyg =
+        context.select((PassDetailModel model) => model.isWysiwyg);
     return path == null
         ? const Scaffold()
         : Scaffold(
@@ -69,8 +71,21 @@ class PassDetailView extends StatelessWidget {
                 },
               ),
               actions: [
+                IconButton(
+                  onPressed: () =>
+                      context.read<PassDetailModel>().toggleWysiwyg(),
+                  icon: Icon(
+                    isWysiwyg
+                        ? Icons.text_snippet_rounded
+                        : Icons.view_list_rounded,
+                    color: Colors.grey,
+                  ),
+                ),
                 mode != DetailViewMode.readOnly
-                    ? const SizedBox.shrink()
+                    ? TextButton(
+                        onPressed: () => context.read<PassDetailModel>().save(),
+                        child: Text(
+                            S.of(context).pagePassDetailToolbarActionDoneTitle))
                     : TextButton(
                         onPressed: () => context
                             .read<PassDetailModel>()
@@ -78,13 +93,6 @@ class PassDetailView extends StatelessWidget {
                         child: Text(S
                             .of(context)
                             .pagePassDetailToolbarActionEditTitle)),
-                mode == DetailViewMode.readOnly
-                    ? const SizedBox.shrink()
-                    : TextButton(
-                        onPressed: () => context.read<PassDetailModel>().save(),
-                        child: Text(S
-                            .of(context)
-                            .pagePassDetailToolbarActionDoneTitle)),
               ],
             ),
             body: Selector<PassDetailModel, List<String>>(
@@ -92,21 +100,51 @@ class PassDetailView extends StatelessWidget {
               builder: (_, value, ___) =>
                   value.isEmpty && mode == DetailViewMode.readOnly
                       ? Center(child: Text(S.of(context).pagePassDetailEmpty))
-                      : ListView(
-                          children: [
-                            ...value.asMap().entries.map((e) =>
-                                PassFieldBuilder()
-                                    .buildFromLine(e.key, e.value, mode)),
-                            if (mode == DetailViewMode.modify) ...[
-                              buildAddExtraInfoEntryButton(),
-                              const Divider(),
-                              buildDeletePassButton(),
-                            ]
-                          ],
-                        ),
+                      : !isWysiwyg
+                          ? buildRawEditor(value, mode)
+                          : buildWysiwygEditor(value, mode),
             ),
           );
   }
+
+  Widget buildRawEditor(List<String> value, DetailViewMode mode) => Builder(
+      builder: (context) => Flex(
+            direction: Axis.vertical,
+            children: [
+              if (mode == DetailViewMode.modify) ...[
+                buildDeletePassButton(),
+              ],
+              Expanded(
+                flex: 1,
+                child: TextFormField(
+                  initialValue: value.join("\n"),
+                  onChanged: (value) =>
+                      context.read<PassDetailModel>().updatePass(value),
+                  expands: true,
+                  maxLines: null,
+                  keyboardType: TextInputType.multiline,
+                  decoration: InputDecoration(
+                    border: InputBorder.none,
+                    contentPadding: const EdgeInsets.all(16),
+                    hintText: S.of(context).pagePassDetailRawEditorHint,
+                  ),
+                ),
+              ),
+            ],
+          ));
+
+  Widget buildWysiwygEditor(List<String> value, DetailViewMode mode) =>
+      ListView(
+        children: [
+          ...value.asMap().entries.map(
+              (e) => PassFieldBuilder().buildFromLine(e.key, e.value, mode)),
+          if (mode == DetailViewMode.modify) ...[
+            buildAddExtraInfoEntryButton(),
+            const Divider(),
+            buildDeletePassButton(),
+          ]
+        ],
+      );
 
   Widget buildDeletePassButton() => Builder(
       builder: (context) => ListTile(

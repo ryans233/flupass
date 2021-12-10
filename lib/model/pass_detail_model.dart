@@ -26,6 +26,9 @@ class PassDetailModel with ChangeNotifier {
   final TextEditingController newEntryKeyController = TextEditingController();
   final TextEditingController newEntryValueController = TextEditingController();
 
+  bool _isWysiwyg = true;
+  bool get isWysiwyg => _isWysiwyg;
+
   toggleObscurePassword() {
     notifyListeners();
   }
@@ -83,6 +86,7 @@ class PassDetailModel with ChangeNotifier {
 
   clear() {
     selectedPassPath = null;
+    _isWysiwyg = true;
     _passContent = List.empty();
     mode = DetailViewMode.readOnly;
     newEntryKeyController.clear();
@@ -138,7 +142,7 @@ class PassDetailModel with ChangeNotifier {
     newEntryValueController.clear();
   }
 
-  updatePass(int index, String? value) {
+  updatePassByLine(int index, String? value) {
     if ((passContent.length) <= index) return;
     List<String> tmp = List.from(_passContent);
     if (value == null) {
@@ -147,6 +151,17 @@ class PassDetailModel with ChangeNotifier {
       tmp[index] = value;
     }
     _passContent = tmp;
+    notifyListeners();
+  }
+
+  updatePass(String? value) {
+    final tmp = value ?? "";
+    _passContent = tmp.split("\n");
+    notifyListeners();
+  }
+
+  toggleWysiwyg() {
+    _isWysiwyg = !_isWysiwyg;
     notifyListeners();
   }
 }

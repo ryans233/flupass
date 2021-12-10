@@ -89,7 +89,7 @@ class _OtpFieldWidgetState extends State<OtpFieldWidget> {
                 icon: const Icon(Icons.remove_circle_outline),
                 onPressed: () => context
                     .read<PassDetailModel>()
-                    .updatePass(widget.index, null),
+                    .updatePassByLine(widget.index, null),
               ),
         title: TextField(
           controller: _otpCodeController,
@@ -99,8 +99,9 @@ class _OtpFieldWidgetState extends State<OtpFieldWidget> {
             border: InputBorder.none,
           ),
           readOnly: widget.mode == DetailViewMode.readOnly,
-          onChanged: (value) =>
-              context.read<PassDetailModel>().updatePass(widget.index, value),
+          onChanged: (value) => context
+              .read<PassDetailModel>()
+              .updatePassByLine(widget.index, value),
         ),
         trailing: Row(
           mainAxisSize: MainAxisSize.min,
