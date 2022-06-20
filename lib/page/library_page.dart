@@ -26,102 +26,107 @@ class _LibraryPageState extends State<LibraryPage> {
   double width = 400.0;
 
   @override
-  Widget build(BuildContext context) {
-    return LayoutBuilder(builder: (context, constraints) {
-      bool singleColumn = constraints.maxWidth < _maxColumnWidth ||
-          constraints.maxWidth < constraints.maxHeight ||
-          constraints.maxWidth - width < _minColumnWidth;
-      return MultiProvider(
-        providers: [
-          ChangeNotifierProxyProvider<AppSettingsModel, PassStoreListModel>(
-            create: (BuildContext context) =>
-                PassStoreListModel(context.read<AppSettingsModel>()),
-            update: (context, value, previous) =>
-                previous!..onAppSettingsChanged(),
-          ),
-          ChangeNotifierProxyProvider<AppSettingsModel, PassDetailModel>(
-            create: (context) =>
-                PassDetailModel(context.read<AppSettingsModel>()),
-            update: (context, model, previous) =>
-                previous!..onAppSettingsChanged(),
-          ),
-        ],
-        builder: (context, child) => Scaffold(
-          body: singleColumn
-              ? PassListView((File file) {
-                  context.read<PassDetailModel>().open(file.path);
-                  Navigator.of(context).push(
-                    MaterialPageRoute(
-                      builder: (_) => ChangeNotifierProvider.value(
-                        value: context.read<PassDetailModel>(),
-                        builder: (context, child) => PassDetailView(() {
-                          Navigator.of(context).pop();
-                          context.read<PassDetailModel>().clear();
-                        }),
-                      ),
+  Widget build(BuildContext context) => MultiProvider(
+          providers: [
+            ChangeNotifierProxyProvider<AppSettingsModel, PassStoreListModel>(
+              create: (BuildContext context) =>
+                  PassStoreListModel(context.read<AppSettingsModel>()),
+              update: (context, value, previous) =>
+                  previous!..onAppSettingsChanged(),
+            ),
+            ChangeNotifierProxyProvider<AppSettingsModel, PassDetailModel>(
+              create: (context) =>
+                  PassDetailModel(context.read<AppSettingsModel>()),
+              update: (context, model, previous) =>
+                  previous!..onAppSettingsChanged(),
+            ),
+          ],
+          builder: (context, child) => LayoutBuilder(
+                builder: (context, constraints) {
+                  bool singleColumn = constraints.maxWidth < _maxColumnWidth ||
+                      constraints.maxWidth < constraints.maxHeight ||
+                      constraints.maxWidth - width < _minColumnWidth;
+                  return Scaffold(
+                    body: singleColumn
+                        ? PassListView((File file) {
+                            context.read<PassDetailModel>().open(file.path);
+                            Navigator.of(context).push(
+                              MaterialPageRoute(
+                                builder: (_) => ChangeNotifierProvider.value(
+                                  value: context.read<PassDetailModel>(),
+                                  builder: (context, child) =>
+                                      PassDetailView(() {
+                                    Navigator.of(context).pop();
+                                    context.read<PassDetailModel>().clear();
+                                  }),
+                                ),
+                              ),
+                            );
+                          })
+                        : Row(
+                            children: [
+                              SizedBox(
+                                width: width,
+                                child: PassListView((File file) {
+                                  context
+                                      .read<PassDetailModel>()
+                                      .open(file.path);
+                                }),
+                              ),
+                              MouseRegion(
+                                cursor: SystemMouseCursors.resizeColumn,
+                                child: GestureDetector(
+                                  child: Container(
+                                    height: double.infinity,
+                                    color: Colors.grey[100],
+                                    child: const Center(
+                                      child: Icon(
+                                        Icons.drag_indicator,
+                                        size: 12,
+                                      ),
+                                    ),
+                                  ),
+                                  onHorizontalDragUpdate: (details) =>
+                                      setState(() {
+                                    if (details.globalPosition.dx <=
+                                            constraints.maxWidth -
+                                                _minColumnWidth &&
+                                        details.globalPosition.dx >=
+                                            _minColumnWidth) {
+                                      width = details.globalPosition.dx;
+                                    }
+                                  }),
+                                ),
+                              ),
+                              Expanded(
+                                child: PassDetailView(() =>
+                                    context.read<PassDetailModel>().clear()),
+                              )
+                            ],
+                          ),
+                    floatingActionButton: SpeedDial(
+                      icon: Icons.add,
+                      tooltip: S.of(context).pageLibraryDialCreate,
+                      children: [
+                        SpeedDialChild(
+                          child: const Icon(Icons.file_present),
+                          backgroundColor: Colors.deepOrange,
+                          foregroundColor: Colors.white,
+                          label: S.of(context).pageLibraryDialActionNewPass,
+                          onTap: () => showCreatePassDialog(context),
+                        ),
+                        SpeedDialChild(
+                          child: const Icon(Icons.folder),
+                          backgroundColor: Colors.indigo,
+                          foregroundColor: Colors.white,
+                          label: S.of(context).pageLibraryDialActionNewFolder,
+                          onTap: () => showCreateFolderDialog(context),
+                        ),
+                      ],
                     ),
                   );
-                })
-              : Row(
-                  children: [
-                    SizedBox(
-                      width: width,
-                      child: PassListView((File file) {
-                        context.read<PassDetailModel>().open(file.path);
-                      }),
-                    ),
-                    MouseRegion(
-                      cursor: SystemMouseCursors.resizeColumn,
-                      child: GestureDetector(
-                        child: Container(
-                          height: double.infinity,
-                          color: Colors.grey[100],
-                          child: const Center(
-                            child: Icon(
-                              Icons.drag_indicator,
-                              size: 12,
-                            ),
-                          ),
-                        ),
-                        onHorizontalDragUpdate: (details) => setState(() {
-                          if (details.globalPosition.dx <=
-                                  constraints.maxWidth - _minColumnWidth &&
-                              details.globalPosition.dx >= _minColumnWidth) {
-                            width = details.globalPosition.dx;
-                          }
-                        }),
-                      ),
-                    ),
-                    Expanded(
-                      child: PassDetailView(
-                          () => context.read<PassDetailModel>().clear()),
-                    )
-                  ],
-                ),
-          floatingActionButton: SpeedDial(
-            icon: Icons.add,
-            tooltip: S.of(context).pageLibraryDialCreate,
-            children: [
-              SpeedDialChild(
-                child: const Icon(Icons.file_present),
-                backgroundColor: Colors.deepOrange,
-                foregroundColor: Colors.white,
-                label: S.of(context).pageLibraryDialActionNewPass,
-                onTap: () => showCreatePassDialog(context),
-              ),
-              SpeedDialChild(
-                child: const Icon(Icons.folder),
-                backgroundColor: Colors.indigo,
-                foregroundColor: Colors.white,
-                label: S.of(context).pageLibraryDialActionNewFolder,
-                onTap: () => showCreateFolderDialog(context),
-              ),
-            ],
-          ),
-        ),
-      );
-    });
-  }
+                },
+              ));
 
   showCreatePassDialog(BuildContext context) {
     final textEditingController = TextEditingController();
