@@ -24,9 +24,11 @@ class MessageLookup extends MessageLookupByLibrary {
 
   static String m1(path) => "Current path: ${path}";
 
-  static String m2(error) => "Error: ${error}";
+  static String m2(error) => "Can\'t list pass store: ${error}";
 
-  static String m3(filename) => "${filename} created.";
+  static String m3(error) => "Error: ${error}";
+
+  static String m4(filename) => "${filename} created.";
 
   final messages = _notInlinedMessages(_notInlinedMessages);
   static Map<String, Function> _notInlinedMessages(_) => <String, Function>{
@@ -60,14 +62,15 @@ class MessageLookup extends MessageLookupByLibrary {
         "dialogNewPassHintPassName":
             MessageLookupByLibrary.simpleMessage("Pass name"),
         "dialogNewPassTitle": MessageLookupByLibrary.simpleMessage("New pass"),
+        "errorMessageCantListPassStoreWithError": m2,
         "errorMessageYouShouldSettingUpPassStorePathFirst":
             MessageLookupByLibrary.simpleMessage(
                 "You should setting up pass store path first."),
         "pageLibraryDialActionSettings":
             MessageLookupByLibrary.simpleMessage("Settings"),
         "pageLibraryDialMore": MessageLookupByLibrary.simpleMessage("More"),
-        "pageLibrarySnackMsgError": m2,
-        "pageLibrarySnackMsgFilenameCreated": m3,
+        "pageLibrarySnackMsgError": m3,
+        "pageLibrarySnackMsgFilenameCreated": m4,
         "pageLibraryToolbarActionAdd":
             MessageLookupByLibrary.simpleMessage("Add"),
         "pageLibraryToolbarActionAddNewFolder":

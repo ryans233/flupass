@@ -58,5 +58,6 @@
   "pagePassDetailOtpFieldLabel": "OTP",
   "pagePassDetailRawEditorHint": "在此输入文件内容...",
   "pageLibraryDialMore": "更多",
-  "pageLibraryDialActionSettings": "设置"
+  "pageLibraryDialActionSettings": "设置",
+  "errorMessageCantListPassStoreWithError": "无法检索密码库：{error}"
 }

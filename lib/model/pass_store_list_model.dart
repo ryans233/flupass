@@ -1,7 +1,6 @@
 import 'dart:async';
 import 'dart:io';
 
-import 'package:async/async.dart';
 import 'package:flupass/generated/l10n.dart';
 import 'package:flupass/model/app_settings_model.dart';
 import 'package:flutter/foundation.dart';
@@ -22,12 +21,14 @@ class PassStoreListModel with ChangeNotifier {
 
   List<FileSystemEntity> root = List.empty();
 
+  String _errorMsg = "";
+
+  String get errorMsg => _errorMsg;
+
   PassStoreListModel(this.appSettingsModel) {
     _passStorePath = appSettingsModel.path;
     updatePassStore();
   }
-
-  String details = "";
 
   StreamSubscription<FileSystemEvent>? watcher;
 
@@ -38,6 +39,7 @@ class PassStoreListModel with ChangeNotifier {
     debugPrint(
         "PassStoreListModel: onAppSettingsChanged old=$oldPath new=$newPath");
     _passStorePath = newPath;
+    _relativePath = Platform.pathSeparator;
     //Recursive watching is not supported on Linux. Need a workaround.
     watcher?.cancel();
     watcher = Directory(_passStorePath).watch(recursive: true).listen((event) {
@@ -47,12 +49,18 @@ class PassStoreListModel with ChangeNotifier {
   }
 
   updatePassStore() async {
+    _errorMsg = "";
     if (_passStorePath.isEmpty) {
       root = List.empty();
       notifyListeners();
       return;
     }
-    root = await listPassStore(_passStorePath + _relativePath);
+    try {
+      root = await listPassStore(_passStorePath + _relativePath);
+    } catch (e) {
+      _errorMsg =
+          S.current.errorMessageCantListPassStoreWithError(e.toString());
+    }
     notifyListeners();
   }
 

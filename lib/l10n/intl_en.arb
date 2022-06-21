@@ -58,5 +58,6 @@
   "pagePassDetailOtpFieldLabel": "OTP",
   "pagePassDetailRawEditorHint": "Input your pass content here...",
   "pageLibraryDialMore": "More",
-  "pageLibraryDialActionSettings": "Settings"
+  "pageLibraryDialActionSettings": "Settings",
+  "errorMessageCantListPassStoreWithError": "Can't list pass store: {error}"
 }

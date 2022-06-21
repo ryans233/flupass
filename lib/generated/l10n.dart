@@ -649,6 +649,16 @@ class S {
       args: [],
     );
   }
+
+  /// `Can't list pass store: {error}`
+  String errorMessageCantListPassStoreWithError(Object error) {
+    return Intl.message(
+      'Can\'t list pass store: $error',
+      name: 'errorMessageCantListPassStoreWithError',
+      desc: '',
+      args: [error],
+    );
+  }
 }
 
 class AppLocalizationDelegate extends LocalizationsDelegate<S> {
