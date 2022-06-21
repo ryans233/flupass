@@ -136,45 +136,69 @@ class _PassListViewState extends State<PassListView> {
                       ),
           ),
           Expanded(
-            child: ListView.builder(
-              itemCount: root.length,
-              itemBuilder: (_, index) {
-                var entry = root[index];
-                return ListTile(
-                  leading: Icon(
-                      (entry is Directory) ? Icons.folder : Icons.file_present),
-                  title: Text(basename(entry.path)),
-                  subtitle: context.read<PassStoreListModel>().searchMode
-                      ? Text(
-                          entry.parent.path.replaceFirst(
-                            context.read<PassStoreListModel>().passStorePath +
-                                Platform.pathSeparator,
-                            Platform.pathSeparator,
-                          ),
-                          softWrap: false,
-                        )
-                      : null,
-                  onTap: () {
-                    if (entry is File) {
-                      widget.onItemClick?.call(entry);
-                    } else if (entry is Directory) {
-                      context
-                          .read<PassStoreListModel>()
-                          .navigateToFolder(entry.path);
-                      if (scrollController.hasClients) {
-                        Future.delayed(const Duration(milliseconds: 50), () {
-                          scrollController.animateTo(
-                            scrollController.position.maxScrollExtent,
-                            curve: Curves.easeOut,
-                            duration: const Duration(milliseconds: 50),
-                          );
-                        });
-                      }
-                    }
-                  },
-                );
-              },
-            ),
+            child: context.read<PassStoreListModel>().errorMsg.isNotEmpty
+                ? Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                      const Icon(Icons.warning, color: Colors.red, size: 50),
+                      Padding(
+                        child:
+                            Text(context.read<PassStoreListModel>().errorMsg),
+                        padding: const EdgeInsets.symmetric(
+                          vertical: 10,
+                          horizontal: 20,
+                        ),
+                      ),
+                      TextButton(
+                          onPressed: () =>
+                              Navigator.of(context).pushNamed(Routes.settings),
+                          child: Text("Go to settings"))
+                    ],
+                  )
+                : ListView.builder(
+                    itemCount: root.length,
+                    itemBuilder: (_, index) {
+                      final entry = root[index];
+                      return ListTile(
+                        leading: Icon((entry is Directory)
+                            ? Icons.folder
+                            : Icons.file_present),
+                        title: Text(basename(entry.path)),
+                        subtitle: context.read<PassStoreListModel>().searchMode
+                            ? Text(
+                                entry.parent.path.replaceFirst(
+                                  context
+                                          .read<PassStoreListModel>()
+                                          .passStorePath +
+                                      Platform.pathSeparator,
+                                  Platform.pathSeparator,
+                                ),
+                                softWrap: false,
+                              )
+                            : null,
+                        onTap: () {
+                          if (entry is File) {
+                            widget.onItemClick?.call(entry);
+                          } else if (entry is Directory) {
+                            context
+                                .read<PassStoreListModel>()
+                                .navigateToFolder(entry.path);
+                            if (scrollController.hasClients) {
+                              Future.delayed(const Duration(milliseconds: 50),
+                                  () {
+                                scrollController.animateTo(
+                                  scrollController.position.maxScrollExtent,
+                                  curve: Curves.easeOut,
+                                  duration: const Duration(milliseconds: 50),
+                                );
+                              });
+                            }
+                          }
+                        },
+                      );
+                    },
+                  ),
           ),
         ],
       ),

@@ -24,9 +24,11 @@ class MessageLookup extends MessageLookupByLibrary {
 
   static String m1(path) => "当前路径：${path}";
 
-  static String m2(error) => "错误：${error}";
+  static String m2(error) => "无法检索密码库：${error}";
 
-  static String m3(filename) => "${filename} 创建完成。";
+  static String m3(error) => "错误：${error}";
+
+  static String m4(filename) => "${filename} 创建完成。";
 
   final messages = _notInlinedMessages(_notInlinedMessages);
   static Map<String, Function> _notInlinedMessages(_) => <String, Function>{
@@ -57,13 +59,14 @@ class MessageLookup extends MessageLookupByLibrary {
         "dialogNewPassHintPassName":
             MessageLookupByLibrary.simpleMessage("密码文件名"),
         "dialogNewPassTitle": MessageLookupByLibrary.simpleMessage("新的密码"),
+        "errorMessageCantListPassStoreWithError": m2,
         "errorMessageYouShouldSettingUpPassStorePathFirst":
             MessageLookupByLibrary.simpleMessage("请先设置密码库路径。"),
         "pageLibraryDialActionSettings":
             MessageLookupByLibrary.simpleMessage("设置"),
         "pageLibraryDialMore": MessageLookupByLibrary.simpleMessage("更多"),
-        "pageLibrarySnackMsgError": m2,
-        "pageLibrarySnackMsgFilenameCreated": m3,
+        "pageLibrarySnackMsgError": m3,
+        "pageLibrarySnackMsgFilenameCreated": m4,
         "pageLibraryToolbarActionAdd":
             MessageLookupByLibrary.simpleMessage("添加"),
         "pageLibraryToolbarActionAddNewFolder":
