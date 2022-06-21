@@ -60,31 +60,31 @@ class S {
     );
   }
 
-  /// `Create`
-  String get pageLibraryDialCreate {
+  /// `Add`
+  String get pageLibraryToolbarActionAdd {
     return Intl.message(
-      'Create',
-      name: 'pageLibraryDialCreate',
+      'Add',
+      name: 'pageLibraryToolbarActionAdd',
       desc: '',
       args: [],
     );
   }
 
   /// `New pass`
-  String get pageLibraryDialActionNewPass {
+  String get pageLibraryToolbarActionAddNewPass {
     return Intl.message(
       'New pass',
-      name: 'pageLibraryDialActionNewPass',
+      name: 'pageLibraryToolbarActionAddNewPass',
       desc: '',
       args: [],
     );
   }
 
   /// `New folder`
-  String get pageLibraryDialActionNewFolder {
+  String get pageLibraryToolbarActionAddNewFolder {
     return Intl.message(
       'New folder',
-      name: 'pageLibraryDialActionNewFolder',
+      name: 'pageLibraryToolbarActionAddNewFolder',
       desc: '',
       args: [],
     );
@@ -625,6 +625,26 @@ class S {
     return Intl.message(
       'Input your pass content here...',
       name: 'pagePassDetailRawEditorHint',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `More`
+  String get pageLibraryDialMore {
+    return Intl.message(
+      'More',
+      name: 'pageLibraryDialMore',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Settings`
+  String get pageLibraryDialActionSettings {
+    return Intl.message(
+      'Settings',
+      name: 'pageLibraryDialActionSettings',
       desc: '',
       args: [],
     );

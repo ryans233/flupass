@@ -63,13 +63,17 @@ class MessageLookup extends MessageLookupByLibrary {
         "errorMessageYouShouldSettingUpPassStorePathFirst":
             MessageLookupByLibrary.simpleMessage(
                 "You should setting up pass store path first."),
-        "pageLibraryDialActionNewFolder":
-            MessageLookupByLibrary.simpleMessage("New folder"),
-        "pageLibraryDialActionNewPass":
-            MessageLookupByLibrary.simpleMessage("New pass"),
-        "pageLibraryDialCreate": MessageLookupByLibrary.simpleMessage("Create"),
+        "pageLibraryDialActionSettings":
+            MessageLookupByLibrary.simpleMessage("Settings"),
+        "pageLibraryDialMore": MessageLookupByLibrary.simpleMessage("More"),
         "pageLibrarySnackMsgError": m2,
         "pageLibrarySnackMsgFilenameCreated": m3,
+        "pageLibraryToolbarActionAdd":
+            MessageLookupByLibrary.simpleMessage("Add"),
+        "pageLibraryToolbarActionAddNewFolder":
+            MessageLookupByLibrary.simpleMessage("New folder"),
+        "pageLibraryToolbarActionAddNewPass":
+            MessageLookupByLibrary.simpleMessage("New pass"),
         "pagePassDetailEmpty": MessageLookupByLibrary.simpleMessage("Empty."),
         "pagePassDetailExtraInfoFieldNoLabel":
             MessageLookupByLibrary.simpleMessage("No Label"),

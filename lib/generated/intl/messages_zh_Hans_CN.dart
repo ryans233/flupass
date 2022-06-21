@@ -49,7 +49,7 @@ class MessageLookup extends MessageLookupByLibrary {
             MessageLookupByLibrary.simpleMessage("文件夹名称"),
         "dialogNewFolderInvalidHintFolderName":
             MessageLookupByLibrary.simpleMessage("请输入合法的文件夹名称"),
-        "dialogNewFolderTitle": MessageLookupByLibrary.simpleMessage("新的文件夹"),
+        "dialogNewFolderTitle": MessageLookupByLibrary.simpleMessage("新文件夹"),
         "dialogNewPassHelperPassName":
             MessageLookupByLibrary.simpleMessage("文件名将会以 .gpg 后缀名结尾"),
         "dialogNewPassHintInvalidHintPassName":
@@ -59,13 +59,17 @@ class MessageLookup extends MessageLookupByLibrary {
         "dialogNewPassTitle": MessageLookupByLibrary.simpleMessage("新的密码"),
         "errorMessageYouShouldSettingUpPassStorePathFirst":
             MessageLookupByLibrary.simpleMessage("请先设置密码库路径。"),
-        "pageLibraryDialActionNewFolder":
-            MessageLookupByLibrary.simpleMessage("新的文件夹"),
-        "pageLibraryDialActionNewPass":
-            MessageLookupByLibrary.simpleMessage("新的密码"),
-        "pageLibraryDialCreate": MessageLookupByLibrary.simpleMessage("创建"),
+        "pageLibraryDialActionSettings":
+            MessageLookupByLibrary.simpleMessage("设置"),
+        "pageLibraryDialMore": MessageLookupByLibrary.simpleMessage("更多"),
         "pageLibrarySnackMsgError": m2,
         "pageLibrarySnackMsgFilenameCreated": m3,
+        "pageLibraryToolbarActionAdd":
+            MessageLookupByLibrary.simpleMessage("添加"),
+        "pageLibraryToolbarActionAddNewFolder":
+            MessageLookupByLibrary.simpleMessage("新文件夹"),
+        "pageLibraryToolbarActionAddNewPass":
+            MessageLookupByLibrary.simpleMessage("新密码"),
         "pagePassDetailEmpty": MessageLookupByLibrary.simpleMessage("无内容。"),
         "pagePassDetailExtraInfoFieldNoLabel":
             MessageLookupByLibrary.simpleMessage("无标签"),

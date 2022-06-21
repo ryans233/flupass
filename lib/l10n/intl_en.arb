@@ -1,8 +1,8 @@
 {
   "appName": "flupass",
-  "pageLibraryDialCreate": "Create",
-  "pageLibraryDialActionNewPass": "New pass",
-  "pageLibraryDialActionNewFolder": "New folder",
+  "pageLibraryToolbarActionAdd": "Add",
+  "pageLibraryToolbarActionAddNewPass": "New pass",
+  "pageLibraryToolbarActionAddNewFolder": "New folder",
   "dialogButtonCancel": "Cancel",
   "dialogButtonAbort": "Abort",
   "dialogButtonCreate": "Create",
@@ -56,5 +56,7 @@
   "errorMessageYouShouldSettingUpPassStorePathFirst": "You should setting up pass store path first.",
   "viewPassListSearchBarHintText": "Type to Search",
   "pagePassDetailOtpFieldLabel": "OTP",
-  "pagePassDetailRawEditorHint": "Input your pass content here..."
+  "pagePassDetailRawEditorHint": "Input your pass content here...",
+  "pageLibraryDialMore": "More",
+  "pageLibraryDialActionSettings": "Settings"
 }

@@ -22,6 +22,8 @@ class PassListView extends StatefulWidget {
   State<PassListView> createState() => _PassListViewState();
 }
 
+enum AddMenu { file, folder }
+
 class _PassListViewState extends State<PassListView> {
   final scrollController = ScrollController();
 
@@ -51,10 +53,32 @@ class _PassListViewState extends State<PassListView> {
                             needResult: false,
                           ))),
                   icon: const Icon(Icons.autorenew)),
-              IconButton(
-                  onPressed: () =>
-                      Navigator.of(context).pushNamed(Routes.settings),
-                  icon: const Icon(Icons.settings)),
+              PopupMenuButton(
+                tooltip: S.of(context).pageLibraryToolbarActionAdd,
+                icon: const Icon(Icons.add),
+                onSelected: (value) {
+                  switch (value) {
+                    case AddMenu.file:
+                      showCreatePassDialog(context);
+                      break;
+                    case AddMenu.folder:
+                      showCreateFolderDialog(context);
+                      break;
+                  }
+                },
+                itemBuilder: (context) => <PopupMenuEntry>[
+                  PopupMenuItem<AddMenu>(
+                    value: AddMenu.file,
+                    child:
+                        Text(S.of(context).pageLibraryToolbarActionAddNewPass),
+                  ),
+                  PopupMenuItem<AddMenu>(
+                    value: AddMenu.folder,
+                    child: Text(
+                        S.of(context).pageLibraryToolbarActionAddNewFolder),
+                  ),
+                ],
+              )
             ],
             title: context
                     .select((PassStoreListModel model) => model.searchMode)
@@ -179,4 +203,117 @@ class _PassListViewState extends State<PassListView> {
           ),
         ),
       );
+  showCreatePassDialog(BuildContext context) {
+    final textEditingController = TextEditingController();
+    final formKey = GlobalKey<FormState>();
+    showDialog(
+        context: context,
+        builder: (_) => AlertDialog(
+              title: Text(S.of(context).dialogNewPassTitle),
+              content: Form(
+                key: formKey,
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    TextFormField(
+                      decoration: InputDecoration(
+                        hintText: S.of(context).dialogNewPassHintPassName,
+                        helperText: S.of(context).dialogNewPassHelperPassName,
+                      ),
+                      controller: textEditingController,
+                      validator: (value) {
+                        if (value == null || value.isEmpty) {
+                          return S
+                              .of(context)
+                              .dialogNewPassHintInvalidHintPassName;
+                        }
+                        return null;
+                      },
+                    ),
+                  ],
+                ),
+              ),
+              actions: [
+                TextButton(
+                  child: Text(S.of(context).dialogButtonCreate),
+                  onPressed: () {
+                    if (formKey.currentState?.validate() == true) {
+                      Navigator.of(context).pop();
+                      context
+                          .read<PassStoreListModel>()
+                          .createPassFile(textEditingController.text)
+                          .then(
+                            (file) =>
+                                ScaffoldMessenger.of(context).showSnackBar(
+                              SnackBar(
+                                content: Text(S
+                                    .of(context)
+                                    .pageLibrarySnackMsgFilenameCreated(
+                                        basename(file.path))),
+                              ),
+                            ),
+                          )
+                          .catchError(
+                            (error) =>
+                                ScaffoldMessenger.of(context).showSnackBar(
+                              SnackBar(
+                                content: Text(S
+                                    .of(context)
+                                    .pageLibrarySnackMsgError(error)),
+                              ),
+                            ),
+                          );
+                    }
+                  },
+                ),
+              ],
+            ));
+  }
+
+  showCreateFolderDialog(BuildContext context) {
+    final textEditingController = TextEditingController();
+    final formKey = GlobalKey<FormState>();
+    showDialog(
+        context: context,
+        builder: (_) => AlertDialog(
+              title: Text(S.of(context).dialogNewFolderTitle),
+              content: Form(
+                key: formKey,
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Text(S.of(context).dialogNewFolderCurrentPath(
+                        context.read<PassStoreListModel>().relativePath)),
+                    TextFormField(
+                      decoration: InputDecoration(
+                        hintText: S.of(context).dialogNewFolderHintFolderName,
+                      ),
+                      controller: textEditingController,
+                      validator: (value) {
+                        if (value == null || value.isEmpty) {
+                          return S
+                              .of(context)
+                              .dialogNewFolderInvalidHintFolderName;
+                        }
+                        return null;
+                      },
+                    ),
+                  ],
+                ),
+              ),
+              actions: [
+                TextButton(
+                  child: Text(S.of(context).dialogButtonCreate),
+                  onPressed: () {
+                    if (formKey.currentState?.validate() == true) {
+                      Navigator.of(context).pop();
+                      context
+                          .read<PassStoreListModel>()
+                          .createFolder(textEditingController.text);
+                    }
+                  },
+                ),
+              ],
+            ));
+  }
 }

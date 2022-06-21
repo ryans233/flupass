@@ -1,8 +1,8 @@
 {
   "appName": "flupass",
-  "pageLibraryDialCreate": "创建",
-  "pageLibraryDialActionNewPass": "新的密码",
-  "pageLibraryDialActionNewFolder": "新的文件夹",
+  "pageLibraryToolbarActionAdd": "添加",
+  "pageLibraryToolbarActionAddNewPass": "新密码",
+  "pageLibraryToolbarActionAddNewFolder": "新文件夹",
   "dialogButtonCancel": "取消",
   "dialogButtonAbort": "中止",
   "dialogButtonCreate": "创建",
@@ -12,7 +12,7 @@
   "dialogNewPassHintPassName": "密码文件名",
   "dialogNewPassHelperPassName": "文件名将会以 .gpg 后缀名结尾",
   "dialogNewPassHintInvalidHintPassName": "请输入合法的文件名",
-  "dialogNewFolderTitle": "新的文件夹",
+  "dialogNewFolderTitle": "新文件夹",
   "dialogNewFolderHintFolderName": "文件夹名称",
   "dialogNewFolderInvalidHintFolderName": "请输入合法的文件夹名称",
   "dialogNewFolderCurrentPath": "当前路径：{path}",
@@ -56,5 +56,7 @@
   "errorMessageYouShouldSettingUpPassStorePathFirst": "请先设置密码库路径。",
   "viewPassListSearchBarHintText": "键入以搜索",
   "pagePassDetailOtpFieldLabel": "OTP",
-  "pagePassDetailRawEditorHint": "在此输入文件内容..."
+  "pagePassDetailRawEditorHint": "在此输入文件内容...",
+  "pageLibraryDialMore": "更多",
+  "pageLibraryDialActionSettings": "设置"
 }
